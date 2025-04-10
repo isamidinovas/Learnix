@@ -1,5 +1,5 @@
 import React from "react";
-import { Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { routeArray } from "./Routes/routes";
 import "./App.css";
 
@@ -8,9 +8,9 @@ const App: React.FC = () => {
     <Route key={r.path} path={r.path} element={<r.page />} />
   ));
   return (
-    <div className="App">
-      <Routes>{routes}</Routes>
-    </div>
+    // <Router>
+    <Routes>{routes}</Routes>
+    // </Router>
   );
 };
 

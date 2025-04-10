@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="500" height="500" viewBox="0 0 500 500" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Фоновый круг -->
+  <circle cx="250" cy="250" r="200" fill="#F3F4F6" opacity="0.5"/>
+  
+  <!-- Персонаж -->
+  <g transform="translate(100, 100)">
+    <!-- Тело -->
+    <rect x="120" y="140" width="160" height="180" rx="80" fill="#3B82F6"/>
+    
+    <!-- Голова -->
+    <circle cx="200" cy="120" r="70" fill="#F3F4F6"/>
+    <circle cx="200" cy="120" r="65" fill="#FFFFFF"/>
+    
+    <!-- Очки -->
+    <path d="M160 110 h-20 M240 110 h20" stroke="#1F2937" stroke-width="3"/>
+    <circle cx="175" cy="110" r="15" stroke="#1F2937" stroke-width="3" fill="none"/>
+    <circle cx="225" cy="110" r="15" stroke="#1F2937" stroke-width="3" fill="none"/>
+    
+    <!-- Глаза -->
+    <circle cx="175" cy="110" r="5" fill="#1F2937"/>
+    <circle cx="225" cy="110" r="5" fill="#1F2937"/>
+    
+    <!-- Улыбка -->
+    <path d="M185 130 Q200 145 215 130" stroke="#1F2937" stroke-width="3" fill="none"/>
+    
+    <!-- Планшет -->
+    <rect x="140" y="200" width="120" height="80" rx="10" fill="#FCD34D"/>
+    
+    <!-- Рука -->
+    <path d="M140 220 Q120 230 130 260" stroke="#F3F4F6" stroke-width="20" stroke-linecap="round"/>
+  </g>
+  
+  <!-- Облачко с мозгом -->
+  <g transform="translate(300, 150)">
+    <path d="M0,20 Q0,0 20,0 L80,0 Q100,0 100,20 L100,60 Q100,80 80,80 L20,80 Q0,80 0,60 Z" fill="#3B82F6"/>
+    <!-- Мозг -->
+    <path d="M30,30 Q40,20 50,30 Q60,20 70,30 Q80,40 70,50 Q80,60 70,70 Q60,80 50,70 Q40,80 30,70 Q20,60 30,50 Q20,40 30,30" fill="#F3F4F6"/>
+    <!-- Глаза -->
+    <circle cx="45" cy="45" r="3" fill="#1F2937"/>
+    <circle cx="55" cy="45" r="3" fill="#1F2937"/>
+    <!-- Улыбка -->
+    <path d="M43,55 Q50,60 57,55" stroke="#1F2937" stroke-width="2" fill="none"/>
+  </g>
+  
+  <!-- Декоративные элементы -->
+  <circle cx="80" cy="150" r="8" fill="#FCD34D"/>
+  <circle cx="420" cy="350" r="10" fill="#3B82F6"/>
+  <path d="M350,80 L360,70 L370,80 L360,90 Z" fill="#FCD34D"/>
+</svg> 
