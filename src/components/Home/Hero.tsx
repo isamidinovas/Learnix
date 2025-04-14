@@ -5,18 +5,18 @@ const Hero: React.FC = () => {
     <div className="bg-gradient-to-r from-blue-50 to-indigo-100 py-20 md:py-32 min-h-[600px] flex items-center relative overflow-hidden">
       <div className="container mx-auto px-4 relative z-10">
         <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-5xl md:text-7xl font-bold mb-6">
+          <h1 className=" text-3xl md:text-7xl font-bold mb-6">
             <span className="text-gray-800">Чындыгында </span>
             <span className="text-blue-600">Оку</span>
           </h1>
-          <h2 className="text-5xl md:text-7xl font-bold mb-8">
+          <h2 className="text-3xl md:text-7xl font-bold mb-8">
             <span className="text-gray-800">Окуган материалды</span>
           </h2>
 
-          <p className="text-xl md:text-2xl text-gray-700 mb-4">
+          <p className="text-md md:text-2xl text-gray-700 mb-4">
             Сиздин бардык окуу жардамчыңыз.
           </p>
-          <p className="text-xl md:text-2xl text-gray-700 mb-12">
+          <p className="text-md md:text-2xl text-gray-700 mb-12">
             Видео чечимдер жана ЖС жардамы менен окуңуз.
           </p>
 

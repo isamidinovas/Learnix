@@ -42,7 +42,7 @@ const ApproachSection: React.FC = () => {
           {/* Левая колонка */}
           <div className="space-y-8">
             <h2 className="animate-item text-4xl font-bold text-gray-900">
-              Numerade ыкмасы
+              Learnix ыкмасы
             </h2>
             <button className="animate-item animate-delay-1 inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition-colors duration-200">
               Биз жөнүндө көбүрөөк билүү
