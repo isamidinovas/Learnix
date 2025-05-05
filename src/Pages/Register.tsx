@@ -1,6 +1,26 @@
-import React from "react";
+import React, { useState } from "react";
+import { NavLink } from "react-router-dom";
+import { registerUser } from "../services/api/auth";
 
 export const SignUp: React.FC = () => {
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [message, setMessage] = useState<string | null>(null);
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setMessage(null);
+
+    try {
+      await registerUser({ username, email, password });
+      setMessage("Катталуу ийгиликтүү!");
+      setUsername("");
+      setEmail("");
+      setPassword("");
+    } catch (err: any) {
+      setMessage(err.message || "Ката кетти");
+    }
+  };
   return (
     <section className="min-h-screen flex items-center justify-center bg-white">
       <div className="container max-w-6xl mx-auto px-6 md:px-12 lg:px-16 grid md:grid-cols-2 items-center gap-16">
@@ -32,7 +52,6 @@ export const SignUp: React.FC = () => {
           </div>
         </div>
 
-        {/* Оң жак - Катталуу формасы */}
         <div className="bg-white rounded-xl shadow-md p-8 space-y-6">
           <div>
             <h2 className="text-3xl font-bold text-gray-900">
@@ -45,7 +64,6 @@ export const SignUp: React.FC = () => {
             </p>
           </div>
 
-          {/* Социалдык баскычтар */}
           <div className="space-y-3 ">
             <button className="w-full border border-gray-300 rounded-lg py-2 flex items-center justify-center gap-2 hover:bg-gray-50 transition">
               <img
@@ -55,22 +73,6 @@ export const SignUp: React.FC = () => {
               />
               Google менен каттал
             </button>
-            <button className="w-full border border-gray-300 rounded-lg py-2 flex items-center justify-center gap-2 hover:bg-gray-50 transition">
-              <img
-                className="h-5 w-5 mr-2"
-                src="https://www.svgrepo.com/show/475647/facebook-color.svg"
-                alt="Facebook logo"
-              />
-              Facebook менен каттал
-            </button>
-            <button className="w-full border border-gray-300 rounded-lg py-2 flex items-center justify-center gap-2 hover:bg-gray-50 transition">
-              <img
-                className="h-5 w-5 mr-2"
-                src="/images/apple-logo.png"
-                alt="Apple logo"
-              />
-              Apple менен каттал
-            </button>
           </div>
 
           <div className="relative text-center text-gray-400 text-sm">ЖЕ</div>
@@ -79,21 +81,31 @@ export const SignUp: React.FC = () => {
           <form className="space-y-4">
             <input
               type="text"
+              name="username"
+              onChange={(e) => setUsername(e.target.value)}
               placeholder="Толук атыңыз"
+              value={username}
               className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <input
               type="email"
+              value={email}
+              name="email"
+              onChange={(e) => setEmail(e.target.value)}
               placeholder="Email"
               className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <input
               type="password"
+              name="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               placeholder="Сырсөз"
               className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <button
               type="submit"
+              onClick={handleSubmit}
               className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-2 rounded-lg transition"
             >
               Акысыз катталуу
@@ -102,12 +114,12 @@ export const SignUp: React.FC = () => {
 
           <p className="text-center text-sm text-gray-600">
             Аккаунтуңуз барбы?{" "}
-            <a
-              href="/login"
+            <NavLink
+              to="/login"
               className="text-blue-600 font-medium hover:underline"
             >
               Кирүү
-            </a>
+            </NavLink>
           </p>
         </div>
       </div>
