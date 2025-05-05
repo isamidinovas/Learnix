@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
-import { getUser } from "../../services/api/auth";
+import { getUser, logoutUser } from "../../services/api/auth";
+import { userInfo } from "os";
 
 interface SideMenuProps {
   isOpen: boolean;
@@ -13,6 +14,10 @@ const SideMenu: React.FC<SideMenuProps> = ({ isOpen, onClose }) => {
     username: "",
     email: "",
   });
+
+  const handleLogout = () => {
+    logoutUser();
+  };
   useEffect(() => {
     const fetchProfile = async () => {
       try {
@@ -177,13 +182,23 @@ const SideMenu: React.FC<SideMenuProps> = ({ isOpen, onClose }) => {
               </div>
             </nav>
           </div>
-
-          <div className="md:hidden border-t border-gray-200 p-4">
-            <button className="w-full bg-gray-100 text-gray-800 py-2 rounded hover:bg-gray-200 transition">
-              <NavLink to="/login">Кирүү /</NavLink>{" "}
-              <NavLink to="/signup">Катталуу</NavLink>
-            </button>
-          </div>
+          {profile.username ? (
+            <div className="md:hidden border-t border-gray-200 p-4">
+              <button
+                onClick={handleLogout}
+                className="w-full bg-gray-100 text-gray-800 py-2 rounded hover:bg-gray-200 transition"
+              >
+                Чыгуу
+              </button>
+            </div>
+          ) : (
+            <div className="md:hidden border-t border-gray-200 p-4">
+              <button className="w-full bg-gray-100 text-gray-800 py-2 rounded hover:bg-gray-200 transition">
+                <NavLink to="/login">Кирүү </NavLink>
+                <NavLink to="/signup">Катталуу</NavLink>
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </>

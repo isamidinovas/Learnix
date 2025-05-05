@@ -31,6 +31,22 @@ export async function loginUser(data: LoginData): Promise<void> {
 
   localStorage.setItem("access_token", token);
 }
+
+export async function logoutUser(): Promise<void> {
+  localStorage.removeItem("access_token");
+  try {
+    await fetch("http://localhost:8000/logout", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+      },
+    });
+  } catch (error) {
+    console.error("Logout failed", error);
+  }
+
+  window.location.href = "/";
+}
 export async function getUser(): Promise<UserInfo> {
   const token = localStorage.getItem("access_token");
   if (!token) throw new Error("No auth token");
