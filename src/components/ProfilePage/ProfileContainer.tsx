@@ -1,6 +1,7 @@
 import { Eye, EyeOff, Lock, Mail, Phone, User } from "lucide-react";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { getUser } from "../../services/api/auth";
 
 const ProfileContainer = () => {
   const [activeTab, setActiveTab] = useState<"profile" | "security">("profile");
@@ -9,12 +10,25 @@ const ProfileContainer = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const [profile, setProfile] = useState({
-    firstName: "Азамат",
-    lastName: "Асанов",
-    email: "azamat@example.com",
-    phone: "+996 XXX XXX XXX",
+    username: "",
+    email: "",
   });
 
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const user = await getUser();
+        setProfile({
+          username: user.username,
+          email: user.email,
+        });
+      } catch (error) {
+        console.error("Error fetching profile:", error);
+      }
+    };
+
+    fetchProfile();
+  }, []);
   const [passwords, setPasswords] = useState({
     currentPassword: "",
     newPassword: "",
@@ -23,21 +37,17 @@ const ProfileContainer = () => {
 
   const handleProfileUpdate = (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Implement profile update logic
     console.log("Profile updated:", profile);
   };
 
   const handlePasswordChange = (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Implement password change logic
     console.log("Password changed:", passwords);
   };
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
       <h1 className="text-2xl font-bold mb-8">Профиль жөндөөлөрү</h1>
-
-      {/* Tabs */}
       <div className="flex gap-4 mb-8 border-b">
         <button
           className={`pb-4 px-4 ${
@@ -64,10 +74,9 @@ const ProfileContainer = () => {
       {activeTab === "profile" ? (
         <form onSubmit={handleProfileUpdate} className="space-y-6">
           <div className="grid md:grid-cols-2 gap-6">
-            {/* First Name */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Аты
+                Толук аты-жөнү
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -75,36 +84,15 @@ const ProfileContainer = () => {
                 </div>
                 <input
                   type="text"
-                  value={profile.firstName}
+                  defaultValue={profile.username}
                   onChange={(e) =>
-                    setProfile({ ...profile, firstName: e.target.value })
+                    setProfile({ ...profile, username: e.target.value })
                   }
                   className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
                 />
               </div>
             </div>
 
-            {/* Last Name */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Фамилиясы
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <User size={20} className="text-gray-400" />
-                </div>
-                <input
-                  type="text"
-                  value={profile.lastName}
-                  onChange={(e) =>
-                    setProfile({ ...profile, lastName: e.target.value })
-                  }
-                  className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-                />
-              </div>
-            </div>
-
-            {/* Email */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Электрондук почта
@@ -123,26 +111,6 @@ const ProfileContainer = () => {
                 />
               </div>
             </div>
-
-            {/* Phone */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Телефон номери
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Phone size={20} className="text-gray-400" />
-                </div>
-                <input
-                  type="tel"
-                  value={profile.phone}
-                  onChange={(e) =>
-                    setProfile({ ...profile, phone: e.target.value })
-                  }
-                  className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-                />
-              </div>
-            </div>
           </div>
 
           <div className="flex justify-end">
@@ -156,7 +124,6 @@ const ProfileContainer = () => {
         </form>
       ) : (
         <form onSubmit={handlePasswordChange} className="space-y-6">
-          {/* Current Password */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Учурдагы сырсөз
@@ -190,7 +157,6 @@ const ProfileContainer = () => {
             </div>
           </div>
 
-          {/* New Password */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Жаңы сырсөз
@@ -221,7 +187,6 @@ const ProfileContainer = () => {
             </div>
           </div>
 
-          {/* Confirm New Password */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Жаңы сырсөздү ырастоо

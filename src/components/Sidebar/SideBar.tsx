@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
+import { getUser } from "../../services/api/auth";
 
 interface SideMenuProps {
   isOpen: boolean;
@@ -8,10 +9,27 @@ interface SideMenuProps {
 
 const SideMenu: React.FC<SideMenuProps> = ({ isOpen, onClose }) => {
   const [isMoreExpanded, setIsMoreExpanded] = useState(false);
+  const [profile, setProfile] = useState({
+    username: "",
+    email: "",
+  });
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const user = await getUser();
+        setProfile({
+          username: user.username,
+          email: user.email,
+        });
+      } catch (error) {
+        console.error("Error fetching profile:", error);
+      }
+    };
 
+    fetchProfile();
+  }, []);
   return (
     <>
-      {/* Оверлей */}
       <div
         className={`fixed inset-0 bg-black bg-opacity-30 z-40 md:hidden transition-opacity h-full duration-300 ${
           isOpen ? "opacity-100 visible" : "opacity-0 invisible"
@@ -19,7 +37,6 @@ const SideMenu: React.FC<SideMenuProps> = ({ isOpen, onClose }) => {
         onClick={onClose}
       />
 
-      {/* Sidebar */}
       <div
         className={`fixed top-0 left-0 z-50 h-full bg-white border-r border-gray-200 w-72 transform transition-transform duration-300 
         ${isOpen ? "translate-x-0" : "-translate-x-full"} 
@@ -52,7 +69,9 @@ const SideMenu: React.FC<SideMenuProps> = ({ isOpen, onClose }) => {
                 </svg>
               </div>
               <NavLink to="/profile">
-                <div className="font-medium text-gray-800">Конок</div>
+                <div className="font-medium text-gray-800">
+                  {profile.username ? profile.username : "Конок"}
+                </div>
                 <button className="text-sm text-green-600 mt-1 flex items-center">
                   <svg
                     className="w-4 h-4 mr-1"
