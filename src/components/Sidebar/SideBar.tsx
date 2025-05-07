@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { getUser, logoutUser } from "../../services/api/auth";
-import { userInfo } from "os";
 
 interface SideMenuProps {
   isOpen: boolean;

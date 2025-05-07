@@ -1,14 +1,14 @@
 import React from "react";
-import Layout from "../Layouts/Layout";
 import AIChatContainer from "../components/AIChat/AIChatContainer";
+import AIChatLayout from "../Layouts/AIChatLayout";
 
 const AIChat: React.FC = () => {
   return (
-    <Layout>
+    <AIChatLayout>
       <div className="min-h-screen bg-gray-50">
         <AIChatContainer />
       </div>
-    </Layout>
+    </AIChatLayout>
   );
 };
 
