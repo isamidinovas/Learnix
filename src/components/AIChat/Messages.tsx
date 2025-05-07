@@ -1,20 +1,17 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useRef, useEffect } from "react";
 
 interface Message {
-  id: number;
-  role: "user" | "ai";
-  content: string;
+  role: string;
+  text: string;
 }
 
-export const Messages: React.FC = () => {
-  const [messages, setMessages] = useState<Message[]>([
-    { id: 1, content: "ssssssssssss", role: "user" },
-    {
-      id: 2,
-      role: "ai",
-      content: "eeeeeeee",
-    },
-  ]);
+interface MessagesProps {
+  messages: Message[];
+  loading: boolean;
+}
+export const Messages: React.FC<MessagesProps> = ({ messages, loading }) => {
+  console.log("mess:", messages);
+
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -24,26 +21,36 @@ export const Messages: React.FC = () => {
   }, [messages]);
 
   return (
-    <div className="flex flex-col ">
-      <div ref={containerRef} className="flex-1 overflow-auto p-4 space-y-4">
-        {messages.map((msg) => (
+    <div className="flex flex-col h-full">
+      <div
+        ref={containerRef}
+        className="flex flex-col overflow-auto p-4 space-y-4 h-full"
+      >
+        {messages.map((msg, index) => (
           <div
-            key={msg.id}
-            className={`flex ${
+            key={index}
+            className={`flex w-full ${
               msg.role === "user" ? "justify-end" : "justify-start"
             }`}
           >
             <div
-              className={`max-w-xl px-4 py-2 rounded-lg ${
+              className={`max-w-[80%] md:max-w-xl px-4 py-2 rounded-lg ${
                 msg.role === "user"
                   ? "bg-blue-500 text-white"
                   : "bg-gray-300 text-black"
               }`}
             >
-              {msg.content}
+              {msg.text}
             </div>
           </div>
         ))}
+        {loading && (
+          <div className="flex justify-start">
+            <div className=" rounded-lg px-4 py-2 flex items-center">
+              <img src="/images/spinner.svg" alt="Loading..." />
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
