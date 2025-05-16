@@ -1,8 +1,10 @@
+import { Paperclip } from "lucide-react";
 import React, { useRef, useEffect } from "react";
 
 interface Message {
   role: string;
   text: string;
+  fileName?: string;
 }
 
 interface MessagesProps {
@@ -10,8 +12,6 @@ interface MessagesProps {
   loading: boolean;
 }
 export const Messages: React.FC<MessagesProps> = ({ messages, loading }) => {
-  console.log("mess:", messages);
-
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -40,7 +40,14 @@ export const Messages: React.FC<MessagesProps> = ({ messages, loading }) => {
                   : "bg-gray-300 text-black"
               }`}
             >
-              {msg.text}
+              <div className="whitespace-pre-wrap">{msg.text}</div>
+
+              {msg.fileName && (
+                <div className="mt-2 flex items-center gap-2 text-sm text-white/80">
+                  <Paperclip className="w-4 h-4" />
+                  <span className="truncate">{msg.fileName}</span>
+                </div>
+              )}
             </div>
           </div>
         ))}

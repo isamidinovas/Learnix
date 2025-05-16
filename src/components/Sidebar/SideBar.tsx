@@ -125,7 +125,7 @@ const SideMenu: React.FC<SideMenuProps> = ({ isOpen, onClose }) => {
               <NavLink to="/textbooks" className="nav-item">
                 Окуу китептери
               </NavLink>
-              <NavLink to="/flashcards" className="nav-item">
+              <NavLink to="/decks" className="nav-item">
                 Флэшкарталар
               </NavLink>
               <a href="#" className="nav-item">

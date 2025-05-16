@@ -1,23 +1,62 @@
 import React, { useState } from "react";
-import { sendToGemini } from "../../services/api/chat";
 import Messages from "./Messages";
+import { useAppDispatch } from "../../hooks/hooks";
+import { chatWithDocumentAsync } from "../../store/thunks/chatThunk";
+import { resetState } from "../../store/reducers/chatSlice";
+import { Paperclip, SendHorizontal, X } from "lucide-react";
+
 const AIChatContainer: React.FC = () => {
   const [messages, setMessages] = useState<{ role: string; text: string }[]>(
     []
   );
-  const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [file, setFile] = useState<File | undefined>();
+  const [prompt, setPrompt] = useState("");
+  const dispatch = useAppDispatch();
 
-  const handleSend = async () => {
-    if (!input.trim()) return;
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setFile(e.target.files[0]);
+    }
+  };
 
-    const userMessage = { role: "user", text: input };
-    setMessages((prev) => [...prev, userMessage]);
+  const handleSubmit = () => {
+    if (!prompt && !file) return;
+
+    const userMessage = {
+      role: "user",
+      text: prompt,
+      fileName: file?.name,
+    };
+
+    setMessages((prevMessages) => [...prevMessages, userMessage]);
     setLoading(true);
-    setInput("");
-    const reply = await sendToGemini(input);
-    setMessages((prev) => [...prev, { role: "gemini", text: reply }]);
-    setLoading(false);
+
+    dispatch(chatWithDocumentAsync({ file, prompt }))
+      .then((action) => {
+        const geminiMessage = {
+          role: "gemini",
+          text: action.payload as string,
+        };
+        setMessages((prevMessages) => [...prevMessages, geminiMessage]);
+        setLoading(false);
+      })
+      .catch((action) => {
+        const errorMessage = {
+          role: "gemini",
+          text: `Error: ${action.payload as string}`,
+        };
+        setMessages((prevMessages) => [...prevMessages, errorMessage]);
+        setLoading(false);
+      });
+
+    handleReset();
+  };
+
+  const handleReset = () => {
+    dispatch(resetState());
+    setFile(undefined);
+    setPrompt("");
   };
 
   return (
@@ -26,41 +65,54 @@ const AIChatContainer: React.FC = () => {
         <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
           <span className="text-2xl">🤖</span>
         </div>
-        <h1 className="md:text-2xl font-semibold text-gray-800 text-md ">
+        <h1 className="md:text-2xl font-semibold text-gray-800 text-md">
           Жасалма интеллект мугалимибиз ККнан каалаган нерсе жөнүндө сураңыз!
         </h1>
       </div>
+
       <div className="flex-1 overflow-auto px-4">
         <Messages messages={messages} loading={loading} />
       </div>
+
       <div className="px-4 py-4 border-t bg-white">
-        <div className="relative w-full max-w-[100%] md:max-w-[70%] mx-auto">
-          <input
-            type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && handleSend()}
-            placeholder="Введите сообщение"
-            className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          />
-          <button
-            onClick={handleSend}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-          >
-            <svg
-              className="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M13 9l3 3m0 0l-3 3m3-3H8m13 0a9 9 0 11-18 0 9 9 0 0118 0z"
+        <div className="relative w-full max-w-4xl mx-auto p-4 space-y-2">
+          {file && (
+            <div className="flex items-center justify-between px-4 py-2 bg-gray-100 border border-gray-300 rounded-xl text-sm text-gray-700">
+              <div className="flex items-center gap-2">
+                <Paperclip className="w-4 h-4 text-gray-500" />
+                <span className="truncate max-w-xs">{file.name}</span>
+              </div>
+              <button onClick={() => setFile(undefined)} title="Remove file">
+                <X className="w-4 h-4 text-gray-500 hover:text-red-500 transition" />
+              </button>
+            </div>
+          )}
+
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="Жаз..."
+              value={prompt}
+              onChange={(e) => setPrompt(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
+              className="w-full pl-14 pr-12 py-6 text-xl text-gray-800 bg-white rounded-2xl border border-neutral-300 focus:border-gray-500 focus:outline-none transition"
+            />
+
+            <label className="absolute left-4 bottom-5 cursor-pointer">
+              <input
+                type="file"
+                onChange={handleFileChange}
+                accept=".docx,.pdf,.png,.jpg,.gif,.jpeg,.svg"
+                className="hidden"
               />
-            </svg>
-          </button>
+              <Paperclip className="size-6 text-gray-600 hover:text-black transition" />
+            </label>
+
+            <SendHorizontal
+              className="absolute right-4 bottom-5 size-7 text-gray-600 hover:text-black transition cursor-pointer"
+              onClick={handleSubmit}
+            />
+          </div>
         </div>
       </div>
     </div>

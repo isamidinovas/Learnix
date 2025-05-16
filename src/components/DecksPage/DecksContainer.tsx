@@ -1,6 +1,9 @@
-import React, { useState } from "react";
-import FlashCard from "./FlashCard";
-import { Deck } from "../../types/flashcads";
+import React, { useEffect, useState } from "react";
+import { NavLink } from "react-router-dom";
+import { getDecks } from "../../store/thunks/deckThunk";
+
+import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
+import FlashCard from "../FlashCardsPage/FlashCard";
 
 const categories = [
   { name: "Баары", color: "text-blue-600", icon: "📘" },
@@ -12,39 +15,14 @@ const categories = [
   { name: "Информатика", color: "text-orange-400", icon: "💻" },
   { name: "Психология", color: "text-indigo-600", icon: "🧠" },
 ];
-const decks: Deck[] = [
-  {
-    title: "Органикалык химия",
-    category: "Химия",
-    cards: 35,
-    students: 412,
-    shares: 10,
-  },
-  {
-    title: "Физиканын негиздери",
-    category: "Физика",
-    cards: 31,
-    students: 447,
-    shares: 3,
-  },
-  {
-    title: "Равновесие жана ийкемдүүлүк",
-    category: "Физика",
-    cards: 34,
-    students: 141,
-    shares: 0,
-  },
-  {
-    title: "Химияга киришүү",
-    category: "Химия",
-    cards: 30,
-    students: 89,
-    shares: 0,
-  },
-];
 
-export const FlashCardContainer: React.FC = () => {
+export const DecksContainer: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState("Баары");
+  const dispatch = useAppDispatch();
+  const { decks, loading, error } = useAppSelector((state) => state.decks);
+  useEffect(() => {
+    dispatch(getDecks());
+  }, []);
 
   return (
     <div className="p-6">
@@ -80,9 +58,12 @@ export const FlashCardContainer: React.FC = () => {
           <button className="bg-gray-100 text-gray-600 px-4 py-2 rounded-md text-sm">
             ✏️ Түзөтүү
           </button>
-          <button className="bg-blue-100 text-blue-700 px-4 py-2 rounded-md text-sm">
+          <NavLink
+            to="/decks/create"
+            className="bg-blue-100 text-blue-700 px-4 py-2 rounded-md text-sm"
+          >
             ➕ Жаңы
-          </button>
+          </NavLink>
           <button className="bg-blue-200 text-blue-800 px-4 py-2 rounded-md text-sm">
             📥 Импорт карточкалар
           </button>
@@ -112,8 +93,9 @@ export const FlashCardContainer: React.FC = () => {
           </button>
         ))}
       </div>
+      {/* {decks && <FlashCard decks={decks} selectedCategory={selectedCategory} />} */}
       {decks && <FlashCard decks={decks} selectedCategory={selectedCategory} />}
     </div>
   );
 };
-export default FlashCardContainer;
+export default DecksContainer;

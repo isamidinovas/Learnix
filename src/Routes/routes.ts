@@ -3,11 +3,12 @@ import Home from "../Pages/Home";
 import Login from "../Pages/Login";
 import AskEducators from "../Pages/AskEducators";
 import { SignUp } from "../Pages/Register";
-import FlashCards from "../Pages/FlashCards";
 import TextBooks from "../Pages/TextBooks";
 import AIChat from "../Pages/AIChat";
 import Profile from "../Pages/Profile";
 import Scribe from "../Pages/Scribe";
+import DeckCreate from "../Pages/DeckCreate";
+import Decks from "../Pages/Decks";
 
 export interface RouteData {
   permissions: ReadonlyArray<string>;
@@ -31,8 +32,12 @@ export const routeMap = new Map<string, RouteData>()
     page: SignUp,
     permissions: [],
   })
-  .set("/flashcards", {
-    page: FlashCards,
+  .set("/decks", {
+    page: Decks,
+    permissions: [],
+  })
+  .set("/decks/create", {
+    page: DeckCreate,
     permissions: [],
   })
   .set("/textbooks", {
