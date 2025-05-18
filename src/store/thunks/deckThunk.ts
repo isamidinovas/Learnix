@@ -14,6 +14,7 @@ interface DeckDataList {
 }
 
 interface FlashcardData {
+  id: number;
   question: string;
   answer: string;
 }
@@ -76,6 +77,38 @@ export const getDecks = createAsyncThunk<
     }
 
     const data: DeckDataList[] = await response.json();
+    return data;
+  } catch (error: any) {
+    return rejectWithValue(error.message || "Серверге туташуу мүмкүн болбоду");
+  }
+});
+
+export const getDeckById = createAsyncThunk<
+  DeckDataList,
+  string,
+  { rejectValue: string }
+>("decks/getDeck", async (id: string, { rejectWithValue }) => {
+  try {
+    const token = localStorage.getItem("authToken");
+
+    const headers: HeadersInit = {
+      "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    };
+
+    const response = await fetch(`http://127.0.0.1:8000/decks/${id}`, {
+      method: "GET",
+      headers,
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      return rejectWithValue(
+        errorData.detail || "Колодаларды алуу мүмкүн болбоду"
+      );
+    }
+
+    const data = await response.json();
     return data;
   } catch (error: any) {
     return rejectWithValue(error.message || "Серверге туташуу мүмкүн болбоду");

@@ -3,6 +3,7 @@ import { useDispatch } from "react-redux";
 import { createDeck } from "../../store/thunks/deckThunk";
 import { DeckData } from "../../types/decks";
 import { useNavigate } from "react-router-dom";
+import { showSuccessToast } from "../../utils/toast";
 
 const subjects = [
   "Математика",
@@ -32,13 +33,15 @@ const DeckCreateContainer: React.FC = () => {
       title,
       description,
       subject,
+
       flashcards,
     };
 
     const result = await dispatch(createDeck(deckData));
 
     if (createDeck.fulfilled.match(result)) {
-      alert("Колода ийгиликтүү түзүлдү!");
+      // alert("Колода ийгиликтүү түзүлдү!");
+      showSuccessToast("Колода ийгиликтүү түзүлдү!");
       setTitle("");
       setDescription("");
       setSubject(subjects[0]);

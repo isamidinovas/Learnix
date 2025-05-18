@@ -9,6 +9,7 @@ import Profile from "../Pages/Profile";
 import Scribe from "../Pages/Scribe";
 import DeckCreate from "../Pages/DeckCreate";
 import Decks from "../Pages/Decks";
+import DeckDetail from "../Pages/DeckDetail";
 
 export interface RouteData {
   permissions: ReadonlyArray<string>;
@@ -38,6 +39,10 @@ export const routeMap = new Map<string, RouteData>()
   })
   .set("/decks/create", {
     page: DeckCreate,
+    permissions: [],
+  })
+  .set("/decks/:id", {
+    page: DeckDetail,
     permissions: [],
   })
   .set("/textbooks", {

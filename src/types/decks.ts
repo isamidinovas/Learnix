@@ -9,6 +9,7 @@ export interface Deck {
 export interface FlashcardData {
   question: string;
   answer: string;
+  id?: string;
 }
 
 export interface DeckData {
@@ -22,6 +23,8 @@ export interface DeckDataList {
   title: string;
   description?: string;
   subject: string;
+  id: number;
+  user_id: number;
   flashcards: FlashcardData[];
   creator: {
     id: number;

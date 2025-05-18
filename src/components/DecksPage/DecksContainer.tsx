@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { getDecks } from "../../store/thunks/deckThunk";
 
 import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
@@ -20,13 +20,13 @@ export const DecksContainer: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState("Баары");
   const dispatch = useAppDispatch();
   const { decks, loading, error } = useAppSelector((state) => state.decks);
+
   useEffect(() => {
     dispatch(getDecks());
   }, []);
 
   return (
     <div className="p-6">
-      {/* Search and stats */}
       <div className="bg-purple-100 p-6 rounded-xl mb-8 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <div className="w-full">
           <h1 className="text-2xl font-bold mb-4">

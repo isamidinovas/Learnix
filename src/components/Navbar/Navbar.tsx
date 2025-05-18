@@ -1,4 +1,3 @@
-// export default Navbar;
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 
@@ -19,14 +18,12 @@ const Navbar: React.FC<NavbarProps> = ({ onMenuClick }) => {
     <div className="sticky top-0 z-50 bg-white shadow-md">
       <div className="container mx-auto px-4">
         <nav className="flex items-center justify-between py-4 relative">
-          {/* Logo */}
           <div className="flex items-center space-x-4">
             <NavLink to="/" className="text-blue-700 text-2xl font-bold">
               Learnix
             </NavLink>
           </div>
 
-          {/* Desktop Search */}
           <div className="hidden md:flex flex-1 max-w-5xl mx-4">
             <form className="w-full relative">
               <div className="relative">
@@ -65,7 +62,6 @@ const Navbar: React.FC<NavbarProps> = ({ onMenuClick }) => {
                     </svg>
                   </button>
 
-                  {/* Search Button */}
                   <button
                     id="search-lens-btn"
                     className="p-1 text-gray-500 hover:text-gray-700 focus:outline-none"
@@ -88,7 +84,6 @@ const Navbar: React.FC<NavbarProps> = ({ onMenuClick }) => {
             </form>
           </div>
 
-          {/* Desktop Auth Links */}
           <div className="hidden md:flex items-center space-x-4">
             <NavLink className="text-blue-700" to="/login">
               Кирүү
@@ -144,7 +139,6 @@ const Navbar: React.FC<NavbarProps> = ({ onMenuClick }) => {
             </svg>
           </button>
 
-          {/* Mobile Menu Button */}
           <button
             id="menu-btn"
             className="block md:hidden p-1 hover:text-gray-700 focus:outline-none"
