@@ -26,8 +26,11 @@ const FlashCard: React.FC<FlashCard> = ({ selectedCategory, decks }) => {
           </div>
           <h3 className="text-lg font-semibold mb-2">{deck.title}</h3>
 
-          <div className="mt-3 text-xs text-blue-500">
-            {/* Жараткан:{deck.creator}{" "} */}
+          <div className=" mt-3 text-md ">
+            Жараткан:{" "}
+            <span className="text-blue-500">
+              {"  " + deck.creator?.username}
+            </span>
           </div>
         </div>
       ))}

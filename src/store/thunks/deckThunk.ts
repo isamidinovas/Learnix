@@ -24,13 +24,13 @@ export const createDeck = createAsyncThunk<
   { rejectValue: string }
 >("decks/createDeck", async (deckData, { rejectWithValue }) => {
   try {
-    const token = localStorage.getItem("authToken");
+    const token = localStorage.getItem("access_token");
     const headers: HeadersInit = {
       "Content-Type": "application/json",
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
     };
 
-    const response = await fetch(`http://127.0.0.1:8000/decks/`, {
+    const response = await fetch(`http://127.0.0.1:8000/create/decks/`, {
       method: "POST",
       headers: headers,
       body: JSON.stringify(deckData),

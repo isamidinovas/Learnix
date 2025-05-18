@@ -51,7 +51,6 @@ export const DecksContainer: React.FC = () => {
         </div>
       </div>
 
-      {/* Deck control */}
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-xl font-semibold">Сиздин карточкаларыңыз</h2>
         <div className="flex gap-2">
@@ -74,7 +73,6 @@ export const DecksContainer: React.FC = () => {
         Биринчи карточкаңызды кошуңуз жана машыккыла баштаңыз.
       </div>
 
-      {/* Categories */}
       <h2 className="text-xl font-semibold mb-4">Популярдуу топтомдор</h2>
 
       <div className="flex flex-wrap gap-4 mb-6">
@@ -93,7 +91,6 @@ export const DecksContainer: React.FC = () => {
           </button>
         ))}
       </div>
-      {/* {decks && <FlashCard decks={decks} selectedCategory={selectedCategory} />} */}
       {decks && <FlashCard decks={decks} selectedCategory={selectedCategory} />}
     </div>
   );
