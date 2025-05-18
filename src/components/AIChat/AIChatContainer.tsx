@@ -3,7 +3,14 @@ import Messages from "./Messages";
 import { useAppDispatch } from "../../hooks/hooks";
 import { chatWithDocumentAsync } from "../../store/thunks/chatThunk";
 import { resetState } from "../../store/reducers/chatSlice";
-import { Paperclip, SendHorizontal, X } from "lucide-react";
+import {
+  ArrowLeft,
+  CircleArrowLeft,
+  CircleArrowRight,
+  Paperclip,
+  X,
+} from "lucide-react";
+import { NavLink } from "react-router-dom";
 
 const AIChatContainer: React.FC = () => {
   const [messages, setMessages] = useState<{ role: string; text: string }[]>(
@@ -61,13 +68,20 @@ const AIChatContainer: React.FC = () => {
 
   return (
     <div className="h-screen flex flex-col">
-      <div className="px-4 py-4 flex items-center justify-center gap-3 mt-9 md:mt-0 ">
-        <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-          <span className="text-2xl">🤖</span>
+      <div className="px-4  flex flex-col md:flex-row items-center  md:mt-0">
+        <div className="self-start md:self-center">
+          <NavLink to="/" className=" border-gray-600 text-gray-600 p-2  ">
+            <CircleArrowLeft className="w-12 h-7 md:h-9" />
+          </NavLink>
         </div>
-        <h1 className="md:text-2xl font-semibold text-gray-800 text-md">
-          Жасалма интеллект мугалимибиз ККнан каалаган нерсе жөнүндө сураңыз!
-        </h1>
+        <div className="flex flex-col md:flex-row items-center justify-center text-center md:text-left gap-3 md:gap-4 w-full">
+          <span className="bg-blue-100 rounded-full text-3xl md:text-4xl">
+            🤖
+          </span>
+          <h1 className="text-lg md:text-2xl font-semibold text-gray-800">
+            Жасалма интеллект мугалимибиз ККнан каалаган нерсе жөнүндө сураңыз!
+          </h1>
+        </div>
       </div>
 
       <div className="flex-1 overflow-auto px-4">
@@ -108,7 +122,7 @@ const AIChatContainer: React.FC = () => {
               <Paperclip className="size-6 text-gray-600 hover:text-black transition" />
             </label>
 
-            <SendHorizontal
+            <CircleArrowRight
               className="absolute right-4 bottom-5 size-7 text-gray-600 hover:text-black transition cursor-pointer"
               onClick={handleSubmit}
             />
