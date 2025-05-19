@@ -8,16 +8,9 @@ import {
   LogOut,
   User,
   ChevronDown,
-  Zap,
 } from "lucide-react";
-
-// Тестовый студент
-const testStudent = {
-  id: 1,
-  name: "Азамат Асанов",
-  email: "azamat@example.com",
-  avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Azamat",
-};
+import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
+import { loginUser, logoutUser } from "../../store/thunks/authThunk";
 
 const TextBooksNav: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -25,8 +18,8 @@ const TextBooksNav: React.FC = () => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   // Для демонстрации, в реальном приложении это будет управляться через контекст или Redux
   const [isAuthenticated, setIsAuthenticated] = useState(true);
-  const [currentUser] = useState(testStudent);
-
+  const currentUser = useAppSelector((state) => state.auth.user);
+  const dispatch = useAppDispatch();
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
     setIsSearchOpen(false);
@@ -46,13 +39,15 @@ const TextBooksNav: React.FC = () => {
 
   // Имитация выхода
   const handleLogout = () => {
-    setIsAuthenticated(false);
-    setIsProfileOpen(false);
+    // setIsAuthenticated(false);
+    // setIsProfileOpen(false);
+    dispatch(logoutUser());
   };
 
   // Имитация входа
   const handleLogin = () => {
-    setIsAuthenticated(true);
+    // setIsAuthenticated(true);
+    // dispatch(loginUser({}));
   };
 
   const profilelinks = [
@@ -171,15 +166,26 @@ const TextBooksNav: React.FC = () => {
               </div>
             ) : (
               <div className="flex items-center gap-3">
-                <button
-                  onClick={handleLogin}
-                  className="px-4 py-2 text-blue-600 hover:text-blue-700"
-                >
-                  Кирүү
-                </button>
-                <button className="px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors">
-                  Катталуу
-                </button>
+                {currentUser ? (
+                  <button
+                    onClick={handleLogin}
+                    className="px-4 py-2 text-blue-600 hover:text-blue-700"
+                  >
+                    Чыгуу
+                  </button>
+                ) : (
+                  <>
+                    <button
+                      onClick={handleLogin}
+                      className="px-4 py-2 text-blue-600 hover:text-blue-700"
+                    >
+                      Кирүү
+                    </button>
+                    <button className="px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors">
+                      Катталуу
+                    </button>
+                  </>
+                )}
               </div>
             )}
           </div>
@@ -288,7 +294,7 @@ const TextBooksNav: React.FC = () => {
                             className="flex items-center gap-2 text-gray-700 w-full"
                           >
                             <User size={20} />
-                            <span>{currentUser.name}</span>
+                            <span>{currentUser?.username}</span>
                             <ChevronDown size={16} className="ml-auto" />
                           </button>
                           {isProfileOpen && (

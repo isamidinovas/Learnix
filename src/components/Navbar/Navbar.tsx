@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
+import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
+import { logoutUser } from "../../store/thunks/authThunk";
 
 interface NavbarProps {
   onMenuClick: () => void;
@@ -8,12 +10,15 @@ interface NavbarProps {
 const Navbar: React.FC<NavbarProps> = ({ onMenuClick }) => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [mobileSearch, setMobileSearch] = useState("");
-
+  const currentUser = useAppSelector((state) => state.auth.user);
+  const dispatch = useAppDispatch();
   const toggleSearch = () => {
     setIsSearchOpen((prev) => !prev);
     if (isSearchOpen) setMobileSearch("");
   };
-
+  const handleLogout = () => {
+    dispatch(logoutUser());
+  };
   return (
     <div className="sticky top-0 z-50 bg-white shadow-md">
       <div className="container mx-auto px-4">
@@ -85,15 +90,26 @@ const Navbar: React.FC<NavbarProps> = ({ onMenuClick }) => {
           </div>
 
           <div className="hidden md:flex items-center space-x-4">
-            <NavLink className="text-blue-700" to="/login">
-              Кирүү
-            </NavLink>
-            <NavLink
-              className="text-white bg-blue-700 p-2 rounded-lg"
-              to="/signup"
-            >
-              Катталуу
-            </NavLink>
+            {currentUser ? (
+              <button
+                onClick={handleLogout}
+                className="w-full flex items-center justify-center gap-2 px-3 py-2 text-blue-600 border border-blue-600 rounded-lg hover:bg-blue-50 transition-colors"
+              >
+                <span>Чыгуу</span>
+              </button>
+            ) : (
+              <>
+                <NavLink className="text-blue-700" to="/login">
+                  Кирүү
+                </NavLink>
+                <NavLink
+                  className="text-white bg-blue-700 p-2 rounded-lg"
+                  to="/signup"
+                >
+                  Катталуу
+                </NavLink>
+              </>
+            )}
           </div>
 
           {isSearchOpen && (
