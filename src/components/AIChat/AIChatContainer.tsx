@@ -3,13 +3,7 @@ import Messages from "./Messages";
 import { useAppDispatch } from "../../hooks/hooks";
 import { chatWithDocumentAsync } from "../../store/thunks/chatThunk";
 import { resetState } from "../../store/reducers/chatSlice";
-import {
-  ArrowLeft,
-  CircleArrowLeft,
-  CircleArrowRight,
-  Paperclip,
-  X,
-} from "lucide-react";
+import { CircleArrowLeft, CircleArrowRight, Paperclip, X } from "lucide-react";
 import { NavLink } from "react-router-dom";
 
 const AIChatContainer: React.FC = () => {
@@ -26,7 +20,6 @@ const AIChatContainer: React.FC = () => {
       setFile(e.target.files[0]);
     }
   };
-
   const handleSubmit = () => {
     if (!prompt && !file) return;
 
@@ -36,16 +29,20 @@ const AIChatContainer: React.FC = () => {
       fileName: file?.name,
     };
 
-    setMessages((prevMessages) => [...prevMessages, userMessage]);
+    // Формируем новую историю: все старые сообщения + новое сообщение
+    const newMessagesHistory = [...messages, userMessage];
+
+    setMessages(newMessagesHistory);
     setLoading(true);
 
-    dispatch(chatWithDocumentAsync({ file, prompt }))
+    // Передаем всю историю на бекенд
+    dispatch(chatWithDocumentAsync({ file, messages: newMessagesHistory }))
       .then((action) => {
         const geminiMessage = {
           role: "gemini",
           text: action.payload as string,
         };
-        setMessages((prevMessages) => [...prevMessages, geminiMessage]);
+        setMessages((prev) => [...prev, geminiMessage]);
         setLoading(false);
       })
       .catch((action) => {
@@ -53,12 +50,45 @@ const AIChatContainer: React.FC = () => {
           role: "gemini",
           text: `Error: ${action.payload as string}`,
         };
-        setMessages((prevMessages) => [...prevMessages, errorMessage]);
+        setMessages((prev) => [...prev, errorMessage]);
         setLoading(false);
       });
 
     handleReset();
   };
+
+  // const handleSubmit = () => {
+  //   if (!prompt && !file) return;
+
+  //   const userMessage = {
+  //     role: "user",
+  //     text: prompt,
+  //     fileName: file?.name,
+  //   };
+
+  //   setMessages((prevMessages) => [...prevMessages, userMessage]);
+  //   setLoading(true);
+
+  //   dispatch(chatWithDocumentAsync({ file, prompt }))
+  //     .then((action) => {
+  //       const geminiMessage = {
+  //         role: "gemini",
+  //         text: action.payload as string,
+  //       };
+  //       setMessages((prevMessages) => [...prevMessages, geminiMessage]);
+  //       setLoading(false);
+  //     })
+  //     .catch((action) => {
+  //       const errorMessage = {
+  //         role: "gemini",
+  //         text: `Error: ${action.payload as string}`,
+  //       };
+  //       setMessages((prevMessages) => [...prevMessages, errorMessage]);
+  //       setLoading(false);
+  //     });
+
+  //   handleReset();
+  // };
 
   const handleReset = () => {
     dispatch(resetState());
