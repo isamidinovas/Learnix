@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
-import { getDecks } from "../../store/thunks/deckThunk";
+import { getDecks, getMyDecksList } from "../../store/thunks/deckThunk";
 
 import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
 import FlashCard from "../FlashCardsPage/FlashCard";
@@ -24,6 +24,7 @@ export const DecksContainer: React.FC = () => {
 
   useEffect(() => {
     dispatch(getDecks());
+    dispatch(getMyDecksList());
   }, []);
 
   return (
@@ -43,6 +44,7 @@ export const DecksContainer: React.FC = () => {
 
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-xl font-semibold">Сиздин карточкаларыңыз</h2>
+        {}
         <div className="flex gap-2">
           <button className="bg-blue-100 text-blue-700  px-4 py-2 rounded-md text-sm flex items-center gap-2">
             <PenLine /> Түзөтүү

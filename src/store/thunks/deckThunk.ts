@@ -57,7 +57,7 @@ export const getDecks = createAsyncThunk<
   { rejectValue: string }
 >("decks/getDecks", async (_, { rejectWithValue }) => {
   try {
-    const token = localStorage.getItem("authToken");
+    const token = localStorage.getItem("access_token");
 
     const headers: HeadersInit = {
       "Content-Type": "application/json",
@@ -83,13 +83,45 @@ export const getDecks = createAsyncThunk<
   }
 });
 
+export const getMyDecksList = createAsyncThunk<
+  DeckDataList[],
+  void,
+  { rejectValue: string }
+>("decks/getMyDecks", async (_, { rejectWithValue }) => {
+  try {
+    const token = localStorage.getItem("access_token");
+
+    const headers: HeadersInit = {
+      "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    };
+
+    const response = await fetch("http://127.0.0.1:8000/my-decks/", {
+      method: "GET",
+      headers,
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      return rejectWithValue(
+        errorData.detail || "Колодаларды алуу мүмкүн болбоду"
+      );
+    }
+
+    const data: DeckDataList[] = await response.json();
+    return data;
+  } catch (error: any) {
+    return rejectWithValue(error.message || "Серверге туташуу мүмкүн болбоду");
+  }
+});
+
 export const getDeckById = createAsyncThunk<
   DeckDataList,
   string,
   { rejectValue: string }
 >("decks/getDeck", async (id: string, { rejectWithValue }) => {
   try {
-    const token = localStorage.getItem("authToken");
+    const token = localStorage.getItem("access_token");
 
     const headers: HeadersInit = {
       "Content-Type": "application/json",

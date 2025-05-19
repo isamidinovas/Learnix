@@ -3,6 +3,7 @@ import {
   createDeck,
   getDeckById,
   getDecks,
+  getMyDecksList,
   removeDeck,
 } from "../thunks/deckThunk";
 import { DeckDataList } from "../../types/decks";
@@ -73,7 +74,6 @@ const decksSlice = createSlice({
         state.error = null;
       })
       .addCase(removeDeck.fulfilled, (state, action) => {
-        console.log("Удаление выполнено, payload:", action.payload);
         state.loading = false;
         state.decks = state.decks.filter(
           (deck) => deck.id !== Number(action.payload)
@@ -81,6 +81,22 @@ const decksSlice = createSlice({
       })
 
       .addCase(removeDeck.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || "Колода түзүүдө ката кетти";
+      });
+    builder
+      .addCase(getMyDecksList.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getMyDecksList.fulfilled, (state, action) => {
+        state.loading = false;
+        state.decks = state.decks.filter(
+          (deck) => deck.id !== Number(action.payload)
+        );
+      })
+
+      .addCase(getMyDecksList.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || "Колода түзүүдө ката кетти";
       });
