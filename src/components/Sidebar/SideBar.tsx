@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { NavLink } from "react-router-dom";
-import { getUser, logoutUser } from "../../services/api/auth";
+import { NavLink, useNavigate } from "react-router-dom";
+import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
+import { getUser, logoutUser } from "../../store/thunks/authThunk";
 
 interface SideMenuProps {
   isOpen: boolean;
@@ -13,25 +14,23 @@ const SideMenu: React.FC<SideMenuProps> = ({ isOpen, onClose }) => {
     username: "",
     email: "",
   });
-
+  const user = useAppSelector((state) => state.auth.user);
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const handleLogout = () => {
-    logoutUser();
+    dispatch(logoutUser());
+    navigate("/");
   };
   useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const user = await getUser();
-        setProfile({
-          username: user.username,
-          email: user.email,
-        });
-      } catch (error) {
-        console.error("Error fetching profile:", error);
-      }
-    };
-
-    fetchProfile();
-  }, []);
+    if (!user) {
+      dispatch(getUser());
+    } else {
+      setProfile({
+        username: user.username,
+        email: user.email,
+      });
+    }
+  }, [dispatch, user]);
   return (
     <>
       <div
@@ -47,14 +46,12 @@ const SideMenu: React.FC<SideMenuProps> = ({ isOpen, onClose }) => {
         md:translate-x-0 md:relative md:flex md:w-80`}
       >
         <div className="flex flex-col h-full w-full">
-          {/* Кнопка закрытия (мобилка) */}
           <div className="md:hidden flex justify-end p-4 border-b border-gray-200">
             <button onClick={onClose} className="text-gray-500 text-xl">
               &times;
             </button>
           </div>
 
-          {/* Профиль */}
           <div className="p-4 border-b border-gray-200">
             <div className="flex items-center">
               <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mr-3">
@@ -90,7 +87,6 @@ const SideMenu: React.FC<SideMenuProps> = ({ isOpen, onClose }) => {
             </div>
           </div>
 
-          {/* PDF кнопка */}
           <div className="p-4">
             <NavLink
               to="/ai-chat"
@@ -113,7 +109,6 @@ const SideMenu: React.FC<SideMenuProps> = ({ isOpen, onClose }) => {
             </NavLink>
           </div>
 
-          {/* Навигация */}
           <div className=" overflow-y-auto">
             <nav className="flex flex-col space-y-1 px-4 gap-5 text-sm">
               <NavLink to="/login" className="nav-item">

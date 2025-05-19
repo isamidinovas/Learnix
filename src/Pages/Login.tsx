@@ -1,24 +1,17 @@
 import React, { useState } from "react";
-import { Link, Navigate, useNavigate } from "react-router-dom";
-import { loginUser } from "../services/api/auth";
+import { Link, useNavigate } from "react-router-dom";
+import { useAppDispatch } from "../hooks/hooks";
+import { loginUser } from "../store/thunks/authThunk";
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
-  const [message, setMessage] = useState<string | null>(null);
+  const dispatch = useAppDispatch();
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setMessage(null);
-    try {
-      await loginUser({ email, password });
-      setMessage("Катталуу ийгиликтүү!");
-      setEmail("");
-      setPassword("");
-      navigate("/");
-    } catch (err: any) {
-      setMessage(err.message || "Ката кетти");
-    }
+    dispatch(loginUser({ email, password }));
+    navigate("/");
   };
 
   return (

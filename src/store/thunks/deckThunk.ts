@@ -116,7 +116,7 @@ export const getDeckById = createAsyncThunk<
 });
 
 export const removeDeck = createAsyncThunk<
-  string,
+  number,
   string,
   { rejectValue: string }
 >("decks/removeDeck", async (deck_id: string, { rejectWithValue }) => {
@@ -141,7 +141,7 @@ export const removeDeck = createAsyncThunk<
     }
 
     const data = await response.json();
-    return data.id;
+    return data.id; // ← явно число
   } catch (error: any) {
     return rejectWithValue(error.message || "Серверге туташуу мүмкүн болбоду");
   }

@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { getDecks } from "../../store/thunks/deckThunk";
 
 import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
 import FlashCard from "../FlashCardsPage/FlashCard";
+import { PenLine, SquarePlus } from "lucide-react";
 
 const categories = [
   { name: "Баары", color: "text-blue-600", icon: "📘" },
@@ -38,32 +39,21 @@ export const DecksContainer: React.FC = () => {
             className="w-full p-3 rounded-full border border-purple-300 focus:outline-none"
           />
         </div>
-        <div className="flex gap-2">
-          <button className="bg-white px-4 py-2 rounded-lg text-sm flex items-center gap-2 shadow">
-            🔥 <span>Күндөрдүн сериясы</span>
-          </button>
-          <button className="bg-white px-4 py-2 rounded-lg text-sm flex items-center gap-2 shadow">
-            📅 <span>Актив күн</span>
-          </button>
-          <button className="bg-white px-4 py-2 rounded-lg text-sm flex items-center gap-2 shadow">
-            📍 <span>Узун серия</span>
-          </button>
-        </div>
       </div>
 
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-xl font-semibold">Сиздин карточкаларыңыз</h2>
         <div className="flex gap-2">
-          <button className="bg-gray-100 text-gray-600 px-4 py-2 rounded-md text-sm">
-            ✏️ Түзөтүү
+          <button className="bg-blue-100 text-blue-700  px-4 py-2 rounded-md text-sm flex items-center gap-2">
+            <PenLine /> Түзөтүү
           </button>
           <NavLink
             to="/decks/create"
-            className="bg-blue-100 text-blue-700 px-4 py-2 rounded-md text-sm"
+            className="bg-blue-100 text-blue-700  px-4 py-2 rounded-md text-sm flex items-center gap-1"
           >
-            ➕ Жаңы
+            <SquarePlus /> Жаңы
           </NavLink>
-          <button className="bg-blue-200 text-blue-800 px-4 py-2 rounded-md text-sm">
+          <button className="bg-blue-100 text-blue-800 px-4 py-2 rounded-md text-sm">
             📥 Импорт карточкалар
           </button>
         </div>

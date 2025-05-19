@@ -73,11 +73,13 @@ const decksSlice = createSlice({
         state.error = null;
       })
       .addCase(removeDeck.fulfilled, (state, action) => {
+        console.log("Удаление выполнено, payload:", action.payload);
         state.loading = false;
         state.decks = state.decks.filter(
           (deck) => deck.id !== Number(action.payload)
         );
       })
+
       .addCase(removeDeck.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || "Колода түзүүдө ката кетти";

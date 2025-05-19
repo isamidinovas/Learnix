@@ -1,25 +1,20 @@
 import React, { useState } from "react";
-import { NavLink } from "react-router-dom";
-import { registerUser } from "../services/api/auth";
+import { NavLink, useNavigate } from "react-router-dom";
+import { useAppDispatch } from "../hooks/hooks";
+import { registerUser } from "../store/thunks/authThunk";
 
 export const SignUp: React.FC = () => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState<string | null>(null);
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setMessage(null);
-
-    try {
-      await registerUser({ username, email, password });
-      setMessage("Катталуу ийгиликтүү!");
-      setUsername("");
-      setEmail("");
-      setPassword("");
-    } catch (err: any) {
-      setMessage(err.message || "Ката кетти");
-    }
+    dispatch(registerUser({ username, email, password }));
+    navigate("/");
   };
   return (
     <section className="min-h-screen flex items-center justify-center bg-white">
@@ -77,7 +72,6 @@ export const SignUp: React.FC = () => {
 
           <div className="relative text-center text-gray-400 text-sm">ЖЕ</div>
 
-          {/* Форманын талаалары */}
           <form className="space-y-4">
             <input
               type="text"

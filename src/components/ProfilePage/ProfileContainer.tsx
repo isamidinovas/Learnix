@@ -1,34 +1,21 @@
-import { Eye, EyeOff, Lock, Mail, Phone, User } from "lucide-react";
+import { Eye, EyeOff, Lock, Mail, User } from "lucide-react";
 
 import { useEffect, useState } from "react";
-import { getUser } from "../../services/api/auth";
+import { getUser } from "../../store/thunks/authThunk";
+import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
 
 const ProfileContainer = () => {
   const [activeTab, setActiveTab] = useState<"profile" | "security">("profile");
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
+  const user = useAppSelector((state) => state.auth.user);
+  const dispatch = useAppDispatch();
   const [profile, setProfile] = useState({
     username: "",
     email: "",
   });
 
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const user = await getUser();
-        setProfile({
-          username: user.username,
-          email: user.email,
-        });
-      } catch (error) {
-        console.error("Error fetching profile:", error);
-      }
-    };
-
-    fetchProfile();
-  }, []);
   const [passwords, setPasswords] = useState({
     currentPassword: "",
     newPassword: "",
@@ -44,6 +31,16 @@ const ProfileContainer = () => {
     e.preventDefault();
     console.log("Password changed:", passwords);
   };
+  useEffect(() => {
+    if (!user) {
+      dispatch(getUser());
+    } else {
+      setProfile({
+        username: user.username,
+        email: user.email,
+      });
+    }
+  }, [dispatch, user]);
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
