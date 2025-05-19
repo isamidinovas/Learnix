@@ -105,7 +105,7 @@ const SideMenu: React.FC<SideMenuProps> = ({ isOpen, onClose }) => {
                   d="M12 6v6m0 0v6m0-6h6m-6 0H6"
                 />
               </svg>
-              PDF менен маектешүү
+              ЖИ менен маектешүү
             </NavLink>
           </div>
 

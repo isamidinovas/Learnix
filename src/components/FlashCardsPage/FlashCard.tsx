@@ -110,8 +110,8 @@ interface FlashCard {
   decks: DeckDataList[];
 }
 
-const FlashCard: React.FC<FlashCard> = ({ selectedCategory }) => {
-  const decks = useAppSelector((state) => state.decks.decks);
+const FlashCard: React.FC<FlashCard> = ({ selectedCategory, decks }) => {
+  // const decks = useAppSelector((state) => state.decks.decks);
   const [menuDeckId, setMenuDeckId] = useState<string | null>(null); // Для меню с кнопкой удаления
   const [confirmDeckId, setConfirmDeckId] = useState<string | null>(null); // Для окна подтверждения
   const navigate = useNavigate();

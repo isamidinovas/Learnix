@@ -109,7 +109,7 @@ const AIChatContainer: React.FC = () => {
             🤖
           </span>
           <h1 className="text-lg md:text-2xl font-semibold text-gray-800">
-            Жасалма интеллект мугалимибиз ККнан каалаган нерсе жөнүндө сураңыз!
+            Жасалма интеллект мугалимибизден каалаган нерсе жөнүндө сураңыз!
           </h1>
         </div>
       </div>
@@ -135,7 +135,7 @@ const AIChatContainer: React.FC = () => {
           <div className="relative">
             <input
               type="text"
-              placeholder="Жаз..."
+              placeholder="Жазыңыз..."
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleSubmit()}

@@ -21,6 +21,8 @@ export const DecksContainer: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState("Баары");
   const dispatch = useAppDispatch();
   const { decks, loading, error } = useAppSelector((state) => state.decks);
+  const { creatorDecks } = useAppSelector((state) => state.decks);
+  console.log("d:", creatorDecks);
 
   useEffect(() => {
     dispatch(getDecks());
@@ -41,28 +43,26 @@ export const DecksContainer: React.FC = () => {
           />
         </div>
       </div>
+      <div className="flex gap-2 justify-end">
+        <NavLink
+          to="/decks/create"
+          className="bg-blue-100 text-blue-700  px-4 py-2 rounded-md text-sm flex items-center gap-1"
+        >
+          <SquarePlus /> Жаңы
+        </NavLink>
+      </div>
+      <h2 className="text-xl font-semibold mt-6 mb-6">
+        Сиздин карточкаларыңыз
+      </h2>
 
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-semibold">Сиздин карточкаларыңыз</h2>
-        {}
-        <div className="flex gap-2">
-          <button className="bg-blue-100 text-blue-700  px-4 py-2 rounded-md text-sm flex items-center gap-2">
-            <PenLine /> Түзөтүү
-          </button>
-          <NavLink
-            to="/decks/create"
-            className="bg-blue-100 text-blue-700  px-4 py-2 rounded-md text-sm flex items-center gap-1"
-          >
-            <SquarePlus /> Жаңы
-          </NavLink>
-          <button className="bg-blue-100 text-blue-800 px-4 py-2 rounded-md text-sm">
-            📥 Импорт карточкалар
-          </button>
-        </div>
+      <div className=" mb-6">
+        {creatorDecks && (
+          <FlashCard decks={creatorDecks} selectedCategory={selectedCategory} />
+        )}
       </div>
 
       <div className="text-gray-500 mb-8">
-        Биринчи карточкаңызды кошуңуз жана машыккыла баштаңыз.
+        Карточкаңызды кошуңуз жана машыга баштаңыз.
       </div>
 
       <h2 className="text-xl font-semibold mb-4">Популярдуу топтомдор</h2>

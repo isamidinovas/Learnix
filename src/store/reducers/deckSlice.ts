@@ -1,4 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import type { WritableDraft } from "immer";
+
 import {
   createDeck,
   getDeckById,
@@ -12,12 +14,14 @@ interface DeckState {
   loading: boolean;
   error: string | null;
   selectedDeck: DeckDataList | null;
+  creatorDecks: DeckDataList[];
 }
 const initialState: DeckState = {
   decks: [],
   loading: false,
   error: null,
   selectedDeck: null,
+  creatorDecks: [],
 };
 
 const decksSlice = createSlice({
@@ -91,9 +95,7 @@ const decksSlice = createSlice({
       })
       .addCase(getMyDecksList.fulfilled, (state, action) => {
         state.loading = false;
-        state.decks = state.decks.filter(
-          (deck) => deck.id !== Number(action.payload)
-        );
+        state.creatorDecks = JSON.parse(JSON.stringify(action.payload));
       })
 
       .addCase(getMyDecksList.rejected, (state, action) => {
