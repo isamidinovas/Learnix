@@ -114,3 +114,35 @@ export const getDeckById = createAsyncThunk<
     return rejectWithValue(error.message || "Серверге туташуу мүмкүн болбоду");
   }
 });
+
+export const removeDeck = createAsyncThunk<
+  string,
+  string,
+  { rejectValue: string }
+>("decks/removeDeck", async (deck_id: string, { rejectWithValue }) => {
+  try {
+    const token = localStorage.getItem("access_token");
+
+    const headers: HeadersInit = {
+      "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    };
+
+    const response = await fetch(`http://127.0.0.1:8000/decks/${deck_id}`, {
+      method: "DELETE",
+      headers,
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      return rejectWithValue(
+        errorData.detail || "Колодаларды алуу мүмкүн болбоду"
+      );
+    }
+
+    const data = await response.json();
+    return data.id;
+  } catch (error: any) {
+    return rejectWithValue(error.message || "Серверге туташуу мүмкүн болбоду");
+  }
+});
