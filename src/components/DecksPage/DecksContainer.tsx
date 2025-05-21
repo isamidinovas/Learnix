@@ -22,7 +22,6 @@ export const DecksContainer: React.FC = () => {
   const dispatch = useAppDispatch();
   const { decks, loading, error } = useAppSelector((state) => state.decks);
   const { creatorDecks } = useAppSelector((state) => state.decks);
-  console.log("d:", creatorDecks);
 
   useEffect(() => {
     dispatch(getDecks());

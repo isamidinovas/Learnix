@@ -27,7 +27,7 @@ export const SignUp: React.FC = () => {
             className="w-full max-w-lg mx-auto"
           />
           <p className="text-gray-600 text-sm md:text-base leading-relaxed">
-            “Numerade – бул жөн эле карагандан ашык. Бул колдонмо ар бир суроого
+            “Learnix – бул жөн эле карагандан ашык. Бул колдонмо ар бир суроого
             жазуу түрүндөгү чечимди жана үн менен түшүндүрмөнү берет. Мен бул
             колдонмону жакшы көрөм. Азыр менин кыла турганым – 5 жылдыз коюу
             гана.”
@@ -59,7 +59,7 @@ export const SignUp: React.FC = () => {
             </p>
           </div>
 
-          <div className="space-y-3 ">
+          {/* <div className="space-y-3 ">
             <button className="w-full border border-gray-300 rounded-lg py-2 flex items-center justify-center gap-2 hover:bg-gray-50 transition">
               <img
                 className="h-5 w-5 mr-2"
@@ -70,7 +70,7 @@ export const SignUp: React.FC = () => {
             </button>
           </div>
 
-          <div className="relative text-center text-gray-400 text-sm">ЖЕ</div>
+          <div className="relative text-center text-gray-400 text-sm">ЖЕ</div> */}
 
           <form className="space-y-4">
             <input

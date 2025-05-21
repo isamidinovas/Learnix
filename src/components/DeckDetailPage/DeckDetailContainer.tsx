@@ -3,7 +3,13 @@ import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
 import { getDeckById } from "../../store/thunks/deckThunk";
 import { RootState } from "../../store";
 import { NavLink, useParams } from "react-router-dom";
-import { ChevronLeft, ChevronRight, CircleArrowLeft } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  CircleArrowLeft,
+  EllipsisVertical,
+  Trash2,
+} from "lucide-react";
 
 const DeckDetailContainer: React.FC = () => {
   const { selectedDeck } = useAppSelector((state: RootState) => state.decks);
@@ -12,6 +18,7 @@ const DeckDetailContainer: React.FC = () => {
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [flipped, setFlipped] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     if (id) {
@@ -50,12 +57,23 @@ const DeckDetailContainer: React.FC = () => {
   const handleFlip = () => {
     setFlipped((prev) => !prev);
   };
+  const handleMenuOpen = () => {
+    setIsOpen(!isOpen);
+  };
 
   return (
     <div className="max-w-2xl mx-auto my-[10%]   p-6 bg-white rounded-lg shadow-lg">
       <NavLink to="/decks" className=" border-gray-600 text-gray-600 p-2  ">
         <CircleArrowLeft className="w-11 h-8 md:h-9 absolute top-7 left-4 md:left-10" />
       </NavLink>
+      <div className="absolute top-20 right-80">
+        <EllipsisVertical onClick={() => handleMenuOpen()} />
+      </div>
+      {isOpen && (
+        <div className="absolute top-16 right-52 bg-green-200  p-3">
+          <Trash2 />
+        </div>
+      )}
       <div className="text-center mb-6">
         <h2 className="text-4xl font-extrabold text-green-700">
           {selectedDeck.title}

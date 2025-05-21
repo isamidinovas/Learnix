@@ -10,6 +10,7 @@ import Scribe from "../Pages/Scribe";
 import DeckCreate from "../Pages/DeckCreate";
 import Decks from "../Pages/Decks";
 import DeckDetail from "../Pages/DeckDetail";
+import DeckEdit from "../Pages/DeckEdit";
 
 export interface RouteData {
   permissions: ReadonlyArray<string>;
@@ -59,6 +60,10 @@ export const routeMap = new Map<string, RouteData>()
   })
   .set("/scribe", {
     page: Scribe,
+    permissions: [],
+  })
+  .set("/decks/:id/edit", {
+    page: DeckEdit,
     permissions: [],
   });
 

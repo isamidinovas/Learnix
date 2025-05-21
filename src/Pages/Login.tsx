@@ -34,7 +34,7 @@ const Login: React.FC = () => {
           <div>
             <h1 className="text-4xl font-bold text-gray-900 mb-2">Learnix</h1>
           </div>
-
+          {/* 
           <div className="space-y-3">
             <button className="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
               <img
@@ -44,8 +44,8 @@ const Login: React.FC = () => {
               />
               <span>Google менен кирүү</span>
             </button>
-          </div>
-
+          </div> */}
+          {/* 
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-gray-300" />
@@ -53,7 +53,7 @@ const Login: React.FC = () => {
             <div className="relative flex justify-center text-sm">
               <span className="px-2 bg-gray-50 text-gray-500">Же</span>
             </div>
-          </div>
+          </div> */}
 
           <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
             <div className="space-y-4">

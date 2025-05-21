@@ -101,7 +101,7 @@
 import React, { useState } from "react";
 import { DeckDataList } from "../../types/decks";
 import { useNavigate } from "react-router-dom";
-import { EllipsisVertical, Trash2 } from "lucide-react";
+import { EllipsisVertical, PencilLine, Trash2 } from "lucide-react";
 import { removeDeck } from "../../store/thunks/deckThunk";
 import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
 
@@ -142,9 +142,11 @@ const FlashCard: React.FC<FlashCard> = ({ selectedCategory, decks }) => {
   };
 
   const handleCardClick = (id: string) => {
-    // Не навигируем если открыто меню или подтверждение для этой карты
     if (menuDeckId === id || confirmDeckId === id) return;
     navigate(`/decks/${id}`);
+  };
+  const handleCardUpdate = (deck_id: string) => {
+    navigate(`/decks/${deck_id}/edit`);
   };
 
   const filteredDecks =
@@ -189,14 +191,17 @@ const FlashCard: React.FC<FlashCard> = ({ selectedCategory, decks }) => {
               onClick={handleMenuClose} // Закрыть при клике вне меню
             >
               <div
-                className="bg-white p-4 rounded-lg shadow-lg w-48"
+                className="bg-white p-4 rounded-lg shadow-lg w-48 flex items-center "
                 onClick={(e) => e.stopPropagation()} // Не закрывать при клике внутри меню
               >
                 <button
-                  className="flex items-center gap-2 text-red-600 hover:bg-red-100 px-4 py-2 rounded w-full justify-center"
+                  className=" text-red-600 hover:bg-red-100 px-4 py-2 rounded  "
                   onClick={handleConfirmOpen}
                 >
                   <Trash2 size={20} />
+                </button>
+                <button onClick={() => handleCardUpdate(String(deck.id))}>
+                  <PencilLine />
                 </button>
               </div>
             </div>

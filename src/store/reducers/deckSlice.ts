@@ -7,6 +7,7 @@ import {
   getDecks,
   getMyDecksList,
   removeDeck,
+  updateDeck,
 } from "../thunks/deckThunk";
 import { DeckDataList } from "../../types/decks";
 interface DeckState {
@@ -99,6 +100,20 @@ const decksSlice = createSlice({
       })
 
       .addCase(getMyDecksList.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || "Колода түзүүдө ката кетти";
+      });
+    builder
+      .addCase(updateDeck.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateDeck.fulfilled, (state, action) => {
+        state.loading = false;
+        state.selectedDeck = JSON.parse(JSON.stringify(action.payload));
+      })
+
+      .addCase(updateDeck.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || "Колода түзүүдө ката кетти";
       });
