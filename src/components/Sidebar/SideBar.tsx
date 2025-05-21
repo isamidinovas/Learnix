@@ -41,13 +41,16 @@ const SideMenu: React.FC<SideMenuProps> = ({ isOpen, onClose }) => {
       />
 
       <div
-        className={`fixed top-0 left-0 z-50 h-full bg-white border-r border-gray-200 w-72 transform transition-transform duration-300 
+        className={`fixed  top-0 z-50 md:z-10 md:top-4 left-0 h-full bg-white border-r border-gray-200 w-72 transform transition-transform duration-300 
         ${isOpen ? "translate-x-0" : "-translate-x-full"} 
         md:translate-x-0 md:relative md:flex md:w-80`}
       >
         <div className="flex flex-col h-full w-full">
           <div className="md:hidden flex justify-end p-4 border-b border-gray-200">
-            <button onClick={onClose} className="text-gray-500 text-xl">
+            <button
+              onClick={onClose}
+              className="text-gray-500 text-2xl font-bold"
+            >
               &times;
             </button>
           </div>
@@ -111,69 +114,12 @@ const SideMenu: React.FC<SideMenuProps> = ({ isOpen, onClose }) => {
 
           <div className=" overflow-y-auto">
             <nav className="flex flex-col space-y-1 px-4 gap-5 text-sm">
-              <NavLink to="/login" className="nav-item">
-                Башкы бет
-              </NavLink>
-              <NavLink to="/ask-educators" className="nav-item">
-                Мугалимдерден сураңыз
-              </NavLink>
-              <NavLink to="/textbooks" className="nav-item">
-                Окуу китептери
-              </NavLink>
               <NavLink to="/decks" className="nav-item">
                 Флэшкарталар
               </NavLink>
               <a href="#" className="nav-item">
                 Сабакты жаздыруу
               </a>
-
-              {/* Раскрывающийся блок */}
-              <div>
-                <button
-                  onClick={() => setIsMoreExpanded(!isMoreExpanded)}
-                  className="w-full flex items-center py-2 text-gray-700 hover:bg-gray-100 rounded transition-colors"
-                >
-                  <svg
-                    className="w-5 h-5 mr-2 text-gray-500"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M4 6h16M4 12h16M4 18h16"
-                    />
-                  </svg>
-                  Дагы
-                  <svg
-                    className={`w-4 h-4 ml-auto transform transition-transform ${
-                      isMoreExpanded ? "rotate-180" : ""
-                    }`}
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M19 9l-7 7-7-7"
-                    />
-                  </svg>
-                </button>
-                {isMoreExpanded && (
-                  <div className="ml-6 mt-1 space-y-1 text-sm text-gray-600">
-                    <NavLink to="/ai" className="block hover:text-gray-900">
-                      Акыркы AI маектер
-                    </NavLink>
-                    <NavLink to="#" className="block hover:text-gray-900">
-                      Тиркемени жүктөө
-                    </NavLink>
-                  </div>
-                )}
-              </div>
             </nav>
           </div>
           {profile.username ? (

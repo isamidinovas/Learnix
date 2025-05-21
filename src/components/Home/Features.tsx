@@ -57,10 +57,11 @@ const FeaturesSection: React.FC = () => {
               </svg>
             </div>
             <h3 className="text-2xl font-semibold mb-4 text-gray-800">
-              ЖС Жардамчы
+              Жасалма интеллект Жардамчы
             </h3>
             <p className="text-gray-600">
-              ЖС жардамчыга суроо бериңиз жана 24/7 дароо жардам алыңыз
+              Жасалма интеллект жардамчыга суроо бериңиз жана 24/7 дароо жардам
+              алыңыз
             </p>
           </div>
 

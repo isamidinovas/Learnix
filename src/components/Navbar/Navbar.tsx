@@ -20,7 +20,7 @@ const Navbar: React.FC<NavbarProps> = ({ onMenuClick }) => {
     dispatch(logoutUser());
   };
   return (
-    <div className="sticky top-0 z-50 bg-white shadow-md">
+    <div className="fixed top-0 left-0 right-0 z-50 bg-white shadow-md">
       <div className="container mx-auto px-4">
         <nav className="flex items-center justify-between py-4 relative">
           <div className="flex items-center space-x-4">

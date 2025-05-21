@@ -11,6 +11,7 @@ import DeckCreate from "../Pages/DeckCreate";
 import Decks from "../Pages/Decks";
 import DeckDetail from "../Pages/DeckDetail";
 import DeckEdit from "../Pages/DeckEdit";
+import About from "../Pages/About";
 
 export interface RouteData {
   permissions: ReadonlyArray<string>;
@@ -20,6 +21,10 @@ export interface RouteData {
 export const routeMap = new Map<string, RouteData>()
   .set("/", {
     page: Home,
+    permissions: [],
+  })
+  .set("/about", {
+    page: About,
     permissions: [],
   })
   .set("/login", {

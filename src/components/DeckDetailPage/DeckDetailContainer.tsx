@@ -64,7 +64,7 @@ const DeckDetailContainer: React.FC = () => {
   return (
     <div className="max-w-2xl mx-auto my-[10%]   p-6 bg-white rounded-lg shadow-lg">
       <NavLink to="/decks" className=" border-gray-600 text-gray-600 p-2  ">
-        <CircleArrowLeft className="w-11 h-8 md:h-9 absolute top-7 left-4 md:left-10" />
+        <CircleArrowLeft className="w-11 h-8 md:h-9 absolute top-7 left-4 md:left-10 opacity-50" />
       </NavLink>
       <div className="absolute top-20 right-80">
         <EllipsisVertical onClick={() => handleMenuOpen()} />

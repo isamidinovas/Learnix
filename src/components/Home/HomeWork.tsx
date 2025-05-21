@@ -116,7 +116,7 @@ const HomeWork: React.FC = () => {
                   <div className="rounded-[2.5rem] overflow-hidden border-[8px] border-gray-800">
                     <img
                       src="/app-screenshot.png"
-                      alt="Numerade тиркемеси"
+                      alt="Learnix тиркемеси"
                       className="w-full"
                     />
                   </div>

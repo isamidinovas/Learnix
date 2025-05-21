@@ -47,9 +47,9 @@ export const TrialSection: React.FC = () => {
               data-animate
               className="text-emerald-50 text-lg opacity-0 translate-y-5 transition-all duration-700 ease-out delay-100"
             >
-              Numerade менен окуу китебиндеги маселелердин видео чечимдерине
-              жана эксперттердин үй тапшырмаларына жардамына жетүү
-              мүмкүнчүлүгүнө ээ болуңуз.
+              Learnix менен окуу китебиндеги маселелердин видео чечимдерине жана
+              эксперттердин үй тапшырмаларына жардамына жетүү мүмкүнчүлүгүнө ээ
+              болуңуз.
             </p>
             <button
               data-animate
@@ -63,7 +63,7 @@ export const TrialSection: React.FC = () => {
           <div className="relative">
             <img
               src="/mascot.png"
-              alt="Numerade маскоту"
+              alt="Learnix маскоту"
               className="w-full max-w-md mx-auto animate-[float_3s_ease-in-out_infinite]"
             />
             <div className="absolute top-1/4 right-1/4 w-16 h-16 bg-yellow-300 rounded-full opacity-75 animate-[float_3s_ease-in-out_infinite]"></div>

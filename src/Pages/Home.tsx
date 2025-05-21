@@ -5,7 +5,6 @@ import Hero from "../components/Home/Hero";
 import Testimonial from "../components/Home/Testimonial";
 import Layout from "../Layouts/Layout";
 import ApproachSection from "../components/Home/ApproachSection";
-import TabSection from "../components/Home/TabSection";
 
 const Home: React.FC = () => {
   return (
@@ -15,7 +14,6 @@ const Home: React.FC = () => {
         <FeaturesSection />
         <Testimonial />
         <ApproachSection />
-        <TabSection />
         <CTASection />
       </div>
     </Layout>

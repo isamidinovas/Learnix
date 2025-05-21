@@ -10,7 +10,7 @@ interface LayoutProps {
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className=" mt-16 min-h-screen flex flex-col">
       <Navbar onMenuClick={() => setMenuOpen(true)} />
       <div className="flex flex-1 overflow-hidden">
         <div className="flex-shrink-0">

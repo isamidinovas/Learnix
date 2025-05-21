@@ -75,13 +75,6 @@ const ApproachSection: React.FC = () => {
                 Стресске алдырбаңыз. Сиз муну жасай аласыз.
               </p>
             </div>
-
-            <div className="animate-item animate-delay-5 space-y-4">
-              <p className="text-2xl text-gray-400 font-light">Numerade.</p>
-              <p className="text-xl text-gray-500">
-                Түшүнүү мүмкүнчүлүгү. Баары үчүн.
-              </p>
-            </div>
           </div>
         </div>
       </div>
