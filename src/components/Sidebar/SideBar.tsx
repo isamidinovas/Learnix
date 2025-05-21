@@ -9,7 +9,6 @@ interface SideMenuProps {
 }
 
 const SideMenu: React.FC<SideMenuProps> = ({ isOpen, onClose }) => {
-  const [isMoreExpanded, setIsMoreExpanded] = useState(false);
   const [profile, setProfile] = useState({
     username: "",
     email: "",

@@ -4,7 +4,7 @@ import { getDecks, getMyDecksList } from "../../store/thunks/deckThunk";
 
 import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
 import FlashCard from "../FlashCardsPage/FlashCard";
-import { PenLine, SquarePlus } from "lucide-react";
+import { SquarePlus } from "lucide-react";
 
 const categories = [
   { name: "Баары", color: "text-blue-600", icon: "📘" },
@@ -20,13 +20,14 @@ const categories = [
 export const DecksContainer: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState("Баары");
   const dispatch = useAppDispatch();
+  const [search, setSearch] = useState("");
   const { decks, loading, error } = useAppSelector((state) => state.decks);
   const { creatorDecks } = useAppSelector((state) => state.decks);
 
   useEffect(() => {
-    dispatch(getDecks());
-    dispatch(getMyDecksList());
-  }, []);
+    dispatch(getDecks({ title: search }));
+    dispatch(getMyDecksList({ title: search }));
+  }, [search]);
 
   return (
     <div className="p-6">
@@ -37,6 +38,9 @@ export const DecksContainer: React.FC = () => {
           </h1>
           <input
             type="text"
+            value={search}
+            name="search"
+            onChange={(e) => setSearch(e.target.value)}
             placeholder="Карточкаларды изде..."
             className="w-full p-3 rounded-full border border-purple-300 focus:outline-none"
           />

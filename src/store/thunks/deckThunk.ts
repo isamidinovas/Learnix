@@ -53,9 +53,10 @@ export const createDeck = createAsyncThunk<
 
 export const getDecks = createAsyncThunk<
   DeckDataList[],
-  void,
+  { title?: string },
+  // void,
   { rejectValue: string }
->("decks/getDecks", async (_, { rejectWithValue }) => {
+>("decks/getDecks", async ({ title }, { rejectWithValue }) => {
   try {
     const token = localStorage.getItem("access_token");
 
@@ -63,8 +64,11 @@ export const getDecks = createAsyncThunk<
       "Content-Type": "application/json",
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
     };
-
-    const response = await fetch("http://127.0.0.1:8000/decks/", {
+    const url = new URL("http://127.0.0.1:8000/decks/");
+    if (title) {
+      url.searchParams.append("title", title);
+    }
+    const response = await fetch(url.toString(), {
       method: "GET",
       headers,
     });
@@ -85,9 +89,9 @@ export const getDecks = createAsyncThunk<
 
 export const getMyDecksList = createAsyncThunk<
   DeckDataList[],
-  void,
+  { title?: string },
   { rejectValue: string }
->("decks/getMyDecks", async (_, { rejectWithValue }) => {
+>("decks/getMyDecks", async ({ title }, { rejectWithValue }) => {
   try {
     const token = localStorage.getItem("access_token");
 
@@ -95,8 +99,11 @@ export const getMyDecksList = createAsyncThunk<
       "Content-Type": "application/json",
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
     };
-
-    const response = await fetch("http://127.0.0.1:8000/my-decks/", {
+    const url = new URL("http://127.0.0.1:8000/my-decks/");
+    if (title) {
+      url.searchParams.append("title", title);
+    }
+    const response = await fetch(url.toString(), {
       method: "GET",
       headers,
     });
