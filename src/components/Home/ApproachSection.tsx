@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import "./ApproachSection.css";
+import { NavLink } from "react-router-dom";
 
 const ApproachSection: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -30,7 +31,6 @@ const ApproachSection: React.FC = () => {
       className="relative overflow-hidden bg-gradient-to-b from-blue-50 to-white py-24"
       ref={sectionRef}
     >
-      {/* Декоративные элементы */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute -top-4 -right-4 w-24 h-24 bg-blue-100 rounded-full opacity-20 transform rotate-45" />
         <div className="absolute top-1/4 -left-8 w-32 h-32 bg-purple-100 rounded-full opacity-20" />
@@ -39,17 +39,18 @@ const ApproachSection: React.FC = () => {
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          {/* Левая колонка */}
           <div className="space-y-8">
             <h2 className="animate-item text-4xl font-bold text-gray-900">
               Learnix ыкмасы
             </h2>
-            <button className="animate-item animate-delay-1 inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition-colors duration-200">
+            <NavLink
+              to="/about"
+              className="animate-item animate-delay-1 inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition-colors duration-200"
+            >
               Биз жөнүндө көбүрөөк билүү
-            </button>
+            </NavLink>
           </div>
 
-          {/* Правая колонка */}
           <div className="space-y-8">
             <div className="animate-item animate-delay-1 bg-white/80 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-gray-100 hover:shadow-xl transition-shadow duration-300">
               <h3 className="text-xl text-gray-800 mb-2">

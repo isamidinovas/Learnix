@@ -4,7 +4,7 @@ import React, { useRef, useEffect } from "react";
 interface Message {
   role: string;
   text: string;
-  fileName?: string;
+  file?: File;
 }
 
 interface MessagesProps {
@@ -21,44 +21,42 @@ export const Messages: React.FC<MessagesProps> = ({ messages, loading }) => {
   }, [messages]);
 
   return (
-    <div className="flex flex-col h-full">
-      <div
-        ref={containerRef}
-        className="flex flex-col overflow-auto p-4 space-y-4 h-full"
-      >
-        {messages.map((msg, index) => (
-          <div
-            key={index}
-            className={`flex w-full ${
-              msg.role === "user" ? "justify-end" : "justify-start"
-            }`}
-          >
-            <div
-              className={`max-w-[80%] md:max-w-xl px-4 py-2 rounded-lg ${
-                msg.role === "user"
-                  ? "bg-blue-500 text-white"
-                  : "bg-gray-300 text-black"
-              }`}
-            >
-              <div className="whitespace-pre-wrap">{msg.text}</div>
+    <div className="flex flex-col gap-4 py-4">
+      {messages.map((msg, idx) => (
+        <div
+          key={idx}
+          className={`max-w-[70%] p-4 rounded-xl ${
+            msg.role === "user"
+              ? "bg-blue-100 self-end"
+              : "bg-gray-100 self-start"
+          }`}
+        >
+          <p className="mb-2 whitespace-pre-wrap">{msg.text}</p>
 
-              {msg.fileName && (
-                <div className="mt-2 flex items-center gap-2 text-sm text-white/80">
+          {msg.file && (
+            <div className="mt-2">
+              {msg.file.type.startsWith("image/") ? (
+                <img
+                  src={URL.createObjectURL(msg.file)}
+                  alt={msg.file.name}
+                  className="rounded-lg border max-h-64 object-contain"
+                />
+              ) : (
+                <div className="inline-flex items-center gap-2 px-3 py-1 text-sm text-blue-700 bg-blue-200 rounded-full">
                   <Paperclip className="w-4 h-4" />
-                  <span className="truncate">{msg.fileName}</span>
+                  {msg.file.name}
                 </div>
               )}
             </div>
-          </div>
-        ))}
-        {loading && (
-          <div className="flex justify-start">
-            <div className=" rounded-lg px-4 py-2 flex items-center">
-              <img src="/images/spinner.svg" alt="Loading..." />
-            </div>
-          </div>
-        )}
-      </div>
+          )}
+        </div>
+      ))}
+
+      {loading && (
+        <div className="text-gray-400 text-sm italic self-start">
+          Жооп даярдалып жатат...
+        </div>
+      )}
     </div>
   );
 };

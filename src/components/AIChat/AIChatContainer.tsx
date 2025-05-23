@@ -7,9 +7,9 @@ import { CircleArrowLeft, CircleArrowRight, Paperclip, X } from "lucide-react";
 import { NavLink } from "react-router-dom";
 
 const AIChatContainer: React.FC = () => {
-  const [messages, setMessages] = useState<{ role: string; text: string }[]>(
-    []
-  );
+  const [messages, setMessages] = useState<
+    { role: string; text: string; file?: File }[]
+  >([]);
   const [loading, setLoading] = useState(false);
   const [file, setFile] = useState<File | undefined>();
   const [prompt, setPrompt] = useState("");
@@ -18,6 +18,7 @@ const AIChatContainer: React.FC = () => {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       setFile(e.target.files[0]);
+      e.target.value = "";
     }
   };
   const handleSubmit = () => {
@@ -26,7 +27,7 @@ const AIChatContainer: React.FC = () => {
     const userMessage = {
       role: "user",
       text: prompt,
-      fileName: file?.name,
+      file: file,
     };
 
     // Формируем новую историю: все старые сообщения + новое сообщение
@@ -121,14 +122,24 @@ const AIChatContainer: React.FC = () => {
       <div className="px-4 py-4 border-t bg-white">
         <div className="relative w-full max-w-4xl mx-auto p-4 space-y-2">
           {file && (
-            <div className="flex items-center justify-between px-4 py-2 bg-gray-100 border border-gray-300 rounded-xl text-sm text-gray-700">
-              <div className="flex items-center gap-2">
-                <Paperclip className="w-4 h-4 text-gray-500" />
-                <span className="truncate max-w-xs">{file.name}</span>
+            <div className="flex flex-col gap-2 px-4 py-2  text-sm text-gray-700 max-w-[170px]">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Paperclip className="w-4 h-4 text-gray-500" />
+                  <span className="truncate max-w-xs">{file.name}</span>
+                </div>
+                <button onClick={() => setFile(undefined)} title="Remove file">
+                  <X className="w-4 h-4 text-gray-500 hover:text-red-500 transition" />
+                </button>
               </div>
-              <button onClick={() => setFile(undefined)} title="Remove file">
-                <X className="w-4 h-4 text-gray-500 hover:text-red-500 transition" />
-              </button>
+
+              {file.type.startsWith("image/") && (
+                <img
+                  src={URL.createObjectURL(file)}
+                  alt={file.name}
+                  className="rounded-lg border max-h-64 object-contain"
+                />
+              )}
             </div>
           )}
 

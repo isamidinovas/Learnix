@@ -11,8 +11,8 @@ const Footer: React.FC = () => {
           <div>
             <h3 className="text-white text-lg font-semibold mb-4">Learnix</h3>
             <p className="mb-4 text-sm">
-              Студенттер жана окутуучуларга жардам берүү үчүн видео-чечимдер
-              жана Жасалма интеллект жардамчысы бар билим берүү платформасы.
+              Студенттер жана окутуучуларга жардам берүү үчүн Жасалма интеллект
+              жардамчысы бар билим берүү платформасы.
             </p>
           </div>
 
@@ -44,9 +44,9 @@ const Footer: React.FC = () => {
               <li className="hover:text-white transition-colors">
                 <NavLink to="/about">Биз жөнүндө</NavLink>
               </li>
-              <li className="hover:text-white transition-colors">
+              {/* <li className="hover:text-white transition-colors">
                 <NavLink to="/contacts">Байланыш</NavLink>
-              </li>
+              </li> */}
             </ul>
           </div>
         </div>
