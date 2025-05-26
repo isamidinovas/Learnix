@@ -6,12 +6,53 @@ import { loginUser } from "../store/thunks/authThunk";
 const Login: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [errors, setErrors] = useState<{
+    email?: string;
+    password?: string;
+  }>({});
+  const [message, setMessage] = useState<string | null>(null);
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+
+  const validateForm = () => {
+    const newErrors: {
+      email?: string;
+      password?: string;
+    } = {};
+
+    if (!email.trim()) {
+      newErrors.email = "Email киргизиңиз";
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      newErrors.email = "Туура email киргизиңиз";
+    }
+
+    if (!password) {
+      newErrors.password = "Сырсөздү киргизиңиз";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    dispatch(loginUser({ email, password }));
-    navigate("/");
+    setMessage(null);
+
+    if (!validateForm()) {
+      return;
+    }
+
+    try {
+      const result = await dispatch(loginUser({ email, password }));
+      if (result.meta.requestStatus === "fulfilled") {
+        navigate("/");
+      } else {
+        setMessage("Email же сырсөз туура эмес");
+      }
+    } catch (error) {
+      console.error("Кирүүдө ката:", error);
+      setMessage("Email же сырсөз туура эмес");
+    }
   };
 
   return (
@@ -19,13 +60,13 @@ const Login: React.FC = () => {
       <div className="max-w-6xl w-full flex items-center gap-12">
         <div className="flex-1 hidden lg:block">
           <div className="relative">
-            <div className="absolute -top-4 left-0 w-4 h-4 bg-yellow-300 rounded-full" />
-            <div className="absolute top-1/2 right-12 w-6 h-6 bg-blue-500 rounded-full" />
-            <div className="absolute bottom-12 left-1/3 text-2xl">✨</div>
+            <div className="absolute -top-4 left-0 w-4 h-4 bg-yellow-300 rounded-full animate-pulse" />
+            <div className="absolute top-1/2 right-12 w-6 h-6 bg-blue-500 rounded-full animate-bounce" />
+
             <img
               src="/illustration.svg"
               alt="Login illustration"
-              className="w-full max-w-lg mx-auto"
+              className="w-full max-w-lg mx-auto transform hover:scale-105 transition-transform duration-300"
             />
           </div>
         </div>
@@ -33,6 +74,7 @@ const Login: React.FC = () => {
         <div className="flex-1 max-w-md w-full space-y-8">
           <div>
             <h1 className="text-4xl font-bold text-gray-900 mb-2">Learnix</h1>
+            <p className="text-gray-600">Аккаунтуңузга кирүү</p>
           </div>
           {/* 
           <div className="space-y-3">
@@ -55,57 +97,68 @@ const Login: React.FC = () => {
             </div>
           </div> */}
 
-          <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+          {message && (
+            <div className="mt-4 p-3 bg-red-100 text-red-700 rounded-lg text-sm animate-fadeIn">
+              {message}
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="mt-8 space-y-6">
             <div className="space-y-4">
               <div>
                 <input
                   type="email"
-                  required
-                  className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                  placeholder="Email Address"
                   value={email}
+                  name="email"
                   onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Email"
+                  className={`w-full px-4 py-3 rounded-lg border ${
+                    errors.email ? "border-red-500" : "border-gray-300"
+                  } focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200`}
                 />
+                {errors.email && (
+                  <p className="mt-1 text-sm text-red-500 animate-fadeIn">
+                    {errors.email}
+                  </p>
+                )}
               </div>
+
               <div>
                 <input
                   type="password"
-                  required
-                  className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                  placeholder="Password"
+                  name="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Сырсөз"
+                  className={`w-full px-4 py-3 rounded-lg border ${
+                    errors.password ? "border-red-500" : "border-gray-300"
+                  } focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200`}
                 />
+                {errors.password && (
+                  <p className="mt-1 text-sm text-red-500 animate-fadeIn">
+                    {errors.password}
+                  </p>
+                )}
               </div>
             </div>
 
-            <div>
-              <button
-                type="submit"
-                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-              >
-                Кирүү
-              </button>
-            </div>
+            <button
+              type="submit"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-all duration-200 transform hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            >
+              Кирүү
+            </button>
           </form>
 
-          <div className="flex flex-col items-center space-y-2 text-sm">
-            <div>
-              Learnixте жаңысызбы?
-              <Link
-                to="/signup"
-                className="font-medium text-blue-600 hover:text-blue-500"
-              >
-                Катталуу
-              </Link>
-            </div>
+          <p className="text-center text-sm text-gray-600 mt-4">
+            Аккаунтуңуз жокбу?{" "}
             <Link
-              to="/forgot-password"
-              className="font-medium text-blue-600 hover:text-blue-500"
+              to="/signup"
+              className="text-blue-600 font-medium hover:text-blue-700 hover:underline transition-colors duration-200"
             >
-              Сырсөздү унуттуңузбу?
+              Катталуу
             </Link>
-          </div>
+          </p>
         </div>
       </div>
     </div>

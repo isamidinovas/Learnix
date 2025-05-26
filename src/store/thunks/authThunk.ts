@@ -1,5 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { LoginData, RegisterData, UserInfo } from "../../types/auth";
+import { showSuccessToast, showErrorToast } from "../../utils/toast";
 
 // Регистрация пользователя
 export const registerUser = createAsyncThunk<
@@ -15,9 +16,12 @@ export const registerUser = createAsyncThunk<
     });
     if (!response.ok) {
       const error = await response.json();
+      showErrorToast(error.detail || "Ката кетти");
       return rejectWithValue(error.detail || "Ката кетти");
     }
+    showSuccessToast("Каттоо ийгиликтүү аяктады");
   } catch (error: any) {
+    showErrorToast(error.message || "Серверге туташуу мүмкүн болбоду");
     return rejectWithValue(error.message || "Серверге туташуу мүмкүн болбоду");
   }
 });
@@ -27,7 +31,7 @@ export const loginUser = createAsyncThunk<
   string, // вернем токен
   LoginData,
   { rejectValue: string }
->("auth/loginUser", async (data, { rejectWithValue }) => {
+>("auth/loginUser", async (data, { dispatch, rejectWithValue }) => {
   try {
     const response = await fetch("http://localhost:8000/auth/login", {
       method: "POST",
@@ -36,6 +40,7 @@ export const loginUser = createAsyncThunk<
     });
     if (!response.ok) {
       const error = await response.json();
+      showErrorToast(error.detail || "Ката кетти");
       return rejectWithValue(error.detail || "Ката кетти");
     }
     const payload = await response.json();
@@ -43,8 +48,11 @@ export const loginUser = createAsyncThunk<
     if (!token)
       return rejectWithValue("Login succeeded but no token in response");
     localStorage.setItem("access_token", token);
+    dispatch(getUser());
+    showSuccessToast("Кош келиңиз!");
     return token;
   } catch (error: any) {
+    showErrorToast(error.message || "Серверге туташуу мүмкүн болбоду");
     return rejectWithValue(error.message || "Серверге туташуу мүмкүн болбоду");
   }
 });
@@ -64,9 +72,10 @@ export const logoutUser = createAsyncThunk<void, void>(
         });
       }
       localStorage.removeItem("access_token");
-      // Можно не возвращать ничего, или вернуть успех
+      showSuccessToast("Сиз ийгиликтүү чыктыңыз");
     } catch (error: any) {
-      return rejectWithValue(error.message || "Logout failed");
+      showErrorToast(error.message || "Чыгууда ката кетти");
+      return rejectWithValue(error.message || "Чыгууда ката кетти");
     }
   }
 );
@@ -93,7 +102,6 @@ export const getUser = createAsyncThunk<
       if (response.status === 401) return rejectWithValue("Unauthorized");
       return rejectWithValue("Failed to fetch profile");
     }
-
     return await response.json();
   } catch (error: any) {
     return rejectWithValue(error.message || "Серверге туташуу мүмкүн болбоду");

@@ -1,17 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { DeckData } from "../../types/decks";
-
-interface DeckDataList {
-  title: string;
-  description?: string;
-  subject: string;
-  flashcards: FlashcardData[];
-  creator: {
-    id: number;
-    username: string;
-    email: string;
-  };
-}
+import { DeckData, DeckDataList } from "../../types/decks";
+import { showSuccessToast, showErrorToast } from "../../utils/toast";
 
 interface FlashcardData {
   id: number;
@@ -19,8 +8,17 @@ interface FlashcardData {
   answer: string;
 }
 
+interface SearchParams {
+  title?: string;
+}
+
+interface GetDecksParams {
+  title?: string;
+  subject?: string;
+}
+
 export const createDeck = createAsyncThunk<
-  any,
+  DeckDataList,
   DeckData,
   { rejectValue: string }
 >("decks/createDeck", async (deckData, { rejectWithValue }) => {
@@ -39,51 +37,45 @@ export const createDeck = createAsyncThunk<
 
     if (!response.ok) {
       const errorData = await response.json();
-      return rejectWithValue(errorData.detail || "Не удалось создать колоду");
+      showErrorToast(errorData.detail || "Колоданы түзүү мүмкүн болбоду");
+      return rejectWithValue(
+        errorData.detail || "Колоданы түзүү мүмкүн болбоду"
+      );
     }
 
     const data = await response.json();
+    showSuccessToast("Колода ийгиликтүү түзүлдү");
     return data;
   } catch (error: any) {
-    return rejectWithValue(
-      error.message || "Не удалось подключиться к серверу"
-    );
+    showErrorToast(error.message || "Серверге туташуу мүмкүн болбоду");
+    return rejectWithValue(error.message || "Серверге туташуу мүмкүн болбоду");
   }
 });
 
 export const getDecks = createAsyncThunk<
   DeckDataList[],
-  { title?: string },
-  // void,
+  GetDecksParams,
   { rejectValue: string }
->("decks/getDecks", async ({ title }, { rejectWithValue }) => {
+>("decks/getDecks", async (params = {}, { rejectWithValue }) => {
   try {
-    const token = localStorage.getItem("access_token");
-
-    const headers: HeadersInit = {
-      "Content-Type": "application/json",
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-    };
-    const url = new URL("http://127.0.0.1:8000/decks/");
-    if (title) {
-      url.searchParams.append("title", title);
+    const queryParams = new URLSearchParams();
+    if (params.title) queryParams.append("title", params.title);
+    if (params.subject && params.subject !== "Баары") {
+      queryParams.append("subject", params.subject);
     }
-    const response = await fetch(url.toString(), {
-      method: "GET",
-      headers,
-    });
+
+    const response = await fetch(
+      `http://127.0.0.1:8000/decks?${queryParams.toString()}`
+    );
 
     if (!response.ok) {
-      const errorData = await response.json();
-      return rejectWithValue(
-        errorData.detail || "Колодаларды алуу мүмкүн болбоду"
-      );
+      throw new Error("Колодаларды алууда ката кетти");
     }
 
-    const data: DeckDataList[] = await response.json();
+    const data = await response.json();
     return data;
-  } catch (error: any) {
-    return rejectWithValue(error.message || "Серверге туташуу мүмкүн болбоду");
+  } catch (error) {
+    return rejectWithValue("Колодаларды алууда ката кетти");
   }
 });
 
@@ -91,18 +83,19 @@ export const getMyDecksList = createAsyncThunk<
   DeckDataList[],
   { title?: string },
   { rejectValue: string }
->("decks/getMyDecks", async ({ title }, { rejectWithValue }) => {
+>("decks/getMyDecksList", async ({ title }, { rejectWithValue }) => {
   try {
     const token = localStorage.getItem("access_token");
-
     const headers: HeadersInit = {
       "Content-Type": "application/json",
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
     };
+
     const url = new URL("http://127.0.0.1:8000/my-decks/");
     if (title) {
       url.searchParams.append("title", title);
     }
+
     const response = await fetch(url.toString(), {
       method: "GET",
       headers,
@@ -115,7 +108,7 @@ export const getMyDecksList = createAsyncThunk<
       );
     }
 
-    const data: DeckDataList[] = await response.json();
+    const data = await response.json();
     return data;
   } catch (error: any) {
     return rejectWithValue(error.message || "Серверге туташуу мүмкүн болбоду");
@@ -155,41 +148,44 @@ export const getDeckById = createAsyncThunk<
 });
 
 export const removeDeck = createAsyncThunk<
-  number,
+  string,
   string,
   { rejectValue: string }
->("decks/removeDeck", async (deck_id: string, { rejectWithValue }) => {
+>("decks/removeDeck", async (id: string, { dispatch, rejectWithValue }) => {
   try {
     const token = localStorage.getItem("access_token");
-
     const headers: HeadersInit = {
       "Content-Type": "application/json",
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
     };
 
-    const response = await fetch(`http://127.0.0.1:8000/decks/${deck_id}`, {
+    const response = await fetch(`http://127.0.0.1:8000/decks/${id}`, {
       method: "DELETE",
       headers,
     });
 
     if (!response.ok) {
       const errorData = await response.json();
+      showErrorToast(errorData.detail || "Колоданы өчүрүү мүмкүн болбоду");
       return rejectWithValue(
-        errorData.detail || "Колодаларды алуу мүмкүн болбоду"
+        errorData.detail || "Колоданы өчүрүү мүмкүн болбоду"
       );
     }
 
-    const data = await response.json();
-    return data.id; // ← явно число
+    showSuccessToast("Колода ийгиликтүү өчүрүлдү");
+
+    return id;
   } catch (error: any) {
+    showErrorToast(error.message || "Серверге туташуу мүмкүн болбоду");
     return rejectWithValue(error.message || "Серверге туташуу мүмкүн болбоду");
   }
 });
+
 export const updateDeck = createAsyncThunk<
   DeckDataList,
   { id: string; data: DeckData },
   { rejectValue: string }
->("decks/updateDeck", async ({ id, data }, { rejectWithValue }) => {
+>("decks/updateDeck", async ({ id, data }, { dispatch, rejectWithValue }) => {
   try {
     const token = localStorage.getItem("access_token");
 
@@ -206,14 +202,18 @@ export const updateDeck = createAsyncThunk<
 
     if (!response.ok) {
       const errorData = await response.json();
+      showErrorToast(errorData.detail || "Колоданы өзгөртүү мүмкүн болбоду");
       return rejectWithValue(
         errorData.detail || "Колоданы өзгөртүү мүмкүн болбоду"
       );
     }
 
     const result = await response.json();
+    showSuccessToast("Колода ийгиликтүү жаңыртылды");
+
     return result;
   } catch (error: any) {
+    showErrorToast(error.message || "Серверге туташуу мүмкүн болбоду");
     return rejectWithValue(error.message || "Серверге туташуу мүмкүн болбоду");
   }
 });

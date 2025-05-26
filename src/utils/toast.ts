@@ -31,6 +31,12 @@ export const showErrorToast = (text: string) => {
     gravity: "top",
     position: "right",
     backgroundColor: "#ef4444", // Tailwind red-500
+    style: {
+      fontSize: "1.1rem",
+      padding: "16px 24px",
+      borderRadius: "12px",
+      boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
+    },
   }).showToast();
 };
 
@@ -42,5 +48,11 @@ export const showInfoToast = (text: string) => {
     gravity: "top",
     position: "right",
     backgroundColor: "#3b82f6", // Tailwind blue-500
+    style: {
+      fontSize: "1.1rem",
+      padding: "16px 24px",
+      borderRadius: "12px",
+      boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
+    },
   }).showToast();
 };

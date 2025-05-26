@@ -148,6 +148,7 @@ const AIChatContainer: React.FC = () => {
               type="text"
               placeholder="Жазыңыз..."
               value={prompt}
+              disabled={loading}
               onChange={(e) => setPrompt(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
               className="w-full pl-14 pr-12 py-6 text-xl text-gray-800 bg-white rounded-2xl border border-neutral-300 focus:border-gray-500 focus:outline-none transition"
@@ -157,6 +158,7 @@ const AIChatContainer: React.FC = () => {
               <input
                 type="file"
                 onChange={handleFileChange}
+                disabled={loading}
                 accept=".docx,.pdf,.png,.jpg,.gif,.jpeg,.svg"
                 className="hidden"
               />
@@ -164,7 +166,9 @@ const AIChatContainer: React.FC = () => {
             </label>
 
             <CircleArrowRight
-              className="absolute right-4 bottom-5 size-7 text-gray-600 hover:text-black transition cursor-pointer"
+              className={`absolute right-4 bottom-5 size-7 text-gray-600 transition cursor-pointer hover:text-black ${
+                loading ? "pointer-events-none opacity-50" : ""
+              }`}
               onClick={handleSubmit}
             />
           </div>

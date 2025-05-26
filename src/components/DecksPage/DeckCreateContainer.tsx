@@ -40,8 +40,6 @@ const DeckCreateContainer: React.FC = () => {
     const result = await dispatch(createDeck(deckData));
 
     if (createDeck.fulfilled.match(result)) {
-      // alert("Колода ийгиликтүү түзүлдү!");
-      showSuccessToast("Колода ийгиликтүү түзүлдү!");
       setTitle("");
       setDescription("");
       setSubject(subjects[0]);

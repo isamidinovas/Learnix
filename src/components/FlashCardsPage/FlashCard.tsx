@@ -1,107 +1,7 @@
-// import React, { useState } from "react";
-// import { DeckDataList } from "../../types/decks";
-// import { NavLink, useNavigate } from "react-router-dom";
-// import { EllipsisVertical, Trash2 } from "lucide-react";
-// import { getDecks, removeDeck } from "../../store/thunks/deckThunk";
-// import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
-
-// interface FlashCard {
-//   selectedCategory: string;
-//   decks: DeckDataList[];
-// }
-// const FlashCard: React.FC<FlashCard> = ({ selectedCategory }) => {
-//   const decks = useAppSelector((state) => state.decks.decks);
-//   const [activeDeckId, setActiveDeckId] = useState<string | null>(null);
-//   const navigate = useNavigate();
-//   const dispatch = useAppDispatch();
-//   const currentUser = useAppSelector((state) => state.auth.user);
-//   const handleMenuOpen = (e: React.MouseEvent, deck_id: string) => {
-//     e.stopPropagation();
-//     setActiveDeckId(deck_id);
-//   };
-//   const handleCloseModal = () => {
-//     setActiveDeckId(null);
-//   };
-
-//   const handleDelete = (deck_id: string) => {
-//     dispatch(removeDeck(deck_id));
-//     handleCloseModal();
-//   };
-
-//   const handleCardClick = (id: string) => {
-//     navigate(`/decks/${id}`);
-//   };
-//   const filteredDecks =
-//     selectedCategory === "Баары"
-//       ? decks
-//       : decks.filter((deck) => deck.subject === selectedCategory);
-//   // console.log("deck.creator?.id:", deck.creator?.id);
-//   console.log("currentUser?.id:", currentUser);
-//   return (
-//     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-//       {filteredDecks.map((deck) => (
-//         <React.Fragment key={deck.id}>
-//           <div
-//             onClick={() => handleCardClick(String(deck.id))}
-//             className="border rounded-xl p-5 bg-white shadow-sm hover:shadow-md transition relative"
-//           >
-//             {String(currentUser?.id) === String(deck.creator?.id) && (
-//               <EllipsisVertical
-//                 className="absolute right-3 top-4"
-//                 onClick={(e) => handleMenuOpen(e, String(deck.id))}
-//               />
-//             )}
-
-//             <div className="flex items-center gap-2 mb-2">
-//               <span className="text-sm bg-orange-100 text-orange-500 px-2 py-1 rounded-full">
-//                 {deck.subject}
-//               </span>
-//             </div>
-//             <h3 className="text-lg font-semibold mb-2">{deck.title}</h3>
-
-//             <div className=" mt-3 text-md ">
-//               Жараткан:{" "}
-//               <span className="text-blue-500">
-//                 {"  " + deck.creator?.username}
-//               </span>
-//             </div>
-//           </div>
-//           {/* Modal */}
-//           {activeDeckId === String(deck.id) && (
-//             <div className="fixed inset-0 bg-black bg-opacity-30 flex justify-center items-center z-50">
-//               <div className="bg-white p-6 rounded-xl shadow-lg w-80">
-//                 <Trash2 />
-//                 <h2 className="text-lg font-semibold mb-4">
-//                   Бул карточканы өчүрөсүзбү?
-//                 </h2>
-//                 <div className="flex justify-end gap-3">
-//                   <button
-//                     className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
-//                     onClick={handleCloseModal}
-//                   >
-//                     Жок
-//                   </button>
-//                   <button
-//                     className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
-//                     onClick={() => handleDelete(String(deck.id))}
-//                   >
-//                     Ооба, өчүр
-//                   </button>
-//                 </div>
-//               </div>
-//             </div>
-//           )}
-//         </React.Fragment>
-//       ))}
-//     </div>
-//   );
-// };
-
-// export default FlashCard;
 import React, { useState } from "react";
 import { DeckDataList } from "../../types/decks";
 import { useNavigate } from "react-router-dom";
-import { EllipsisVertical, PencilLine, Trash2 } from "lucide-react";
+import { EllipsisVertical, PencilLine, Trash2, X } from "lucide-react";
 import { removeDeck } from "../../store/thunks/deckThunk";
 import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
 
@@ -111,42 +11,56 @@ interface FlashCard {
 }
 
 const FlashCard: React.FC<FlashCard> = ({ selectedCategory, decks }) => {
-  // const decks = useAppSelector((state) => state.decks.decks);
-  const [menuDeckId, setMenuDeckId] = useState<string | null>(null); // Для меню с кнопкой удаления
-  const [confirmDeckId, setConfirmDeckId] = useState<string | null>(null); // Для окна подтверждения
+  const [selectedDeck, setSelectedDeck] = useState<DeckDataList | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const currentUser = useAppSelector((state) => state.auth.user);
 
-  const handleMenuOpen = (e: React.MouseEvent, deck_id: string) => {
+  const handleMenuOpen = (e: React.MouseEvent, deck: DeckDataList) => {
     e.stopPropagation();
-    setMenuDeckId(deck_id);
+    setSelectedDeck(deck);
+    setIsModalOpen(true);
   };
 
-  const handleMenuClose = () => {
-    setMenuDeckId(null);
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+    setSelectedDeck(null);
   };
 
-  const handleConfirmOpen = () => {
-    setConfirmDeckId(menuDeckId);
-    setMenuDeckId(null);
+  const handleDeleteClick = () => {
+    setIsDeleteModalOpen(true);
+    setIsModalOpen(false);
   };
 
-  const handleConfirmClose = () => {
-    setConfirmDeckId(null);
+  const handleDeleteConfirm = async () => {
+    if (selectedDeck) {
+      try {
+        await dispatch(removeDeck(selectedDeck.id.toString()));
+        setIsDeleteModalOpen(false);
+        setSelectedDeck(null);
+      } catch (error) {
+        console.log(error);
+      }
+    }
   };
 
-  const handleDelete = (deck_id: string) => {
-    dispatch(removeDeck(deck_id));
-    handleConfirmClose();
+  const handleDeleteCancel = () => {
+    setIsDeleteModalOpen(false);
+    setSelectedDeck(null);
+  };
+
+  const handleEdit = () => {
+    if (selectedDeck) {
+      navigate(`/decks/${selectedDeck.id}/edit`);
+      handleModalClose();
+    }
   };
 
   const handleCardClick = (id: string) => {
-    if (menuDeckId === id || confirmDeckId === id) return;
+    if (isModalOpen || isDeleteModalOpen) return;
     navigate(`/decks/${id}`);
-  };
-  const handleCardUpdate = (deck_id: string) => {
-    navigate(`/decks/${deck_id}/edit`);
   };
 
   const filteredDecks =
@@ -155,92 +69,120 @@ const FlashCard: React.FC<FlashCard> = ({ selectedCategory, decks }) => {
       : decks.filter((deck) => deck.subject === selectedCategory);
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-      {filteredDecks.map((deck) => (
-        <React.Fragment key={deck.id}>
+    <>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {filteredDecks.map((deck) => (
           <div
-            onClick={() => handleCardClick(String(deck.id))}
-            className="border rounded-xl p-5 bg-white shadow-sm hover:shadow-md transition relative cursor-pointer"
+            key={deck.id}
+            onClick={() => handleCardClick(deck.id.toString())}
+            className="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer relative group overflow-hidden"
           >
-            {String(deck.creator?.id) === String(currentUser?.id) && (
-              <EllipsisVertical
-                className="absolute right-3 top-4 cursor-pointer"
-                onClick={(e) => handleMenuOpen(e, String(deck.id))}
-              />
-            )}
-
-            <div className="flex items-center gap-2 mb-2">
-              <span className="text-sm bg-orange-100 text-orange-500 px-2 py-1 rounded-full">
-                {deck.subject}
-              </span>
-            </div>
-            <h3 className="text-lg font-semibold mb-2">{deck.title}</h3>
-
-            <div className="mt-3 text-md ">
-              Жараткан:{" "}
-              <span className="text-blue-500">
-                {"  " + deck.creator?.username}
-              </span>
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-purple-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            <div className="p-6 relative">
+              <div className="flex justify-between items-start mb-4">
+                <h3 className="text-xl font-semibold text-gray-800 group-hover:text-blue-600 transition-colors duration-300">
+                  {deck.title}
+                </h3>
+                {currentUser && currentUser.id === deck.user_id && (
+                  <button
+                    onClick={(e) => handleMenuOpen(e, deck)}
+                    className="p-2 hover:bg-gray-100 rounded-full transition-colors opacity-0 group-hover:opacity-100"
+                  >
+                    <EllipsisVertical className="w-5 h-5 text-gray-600" />
+                  </button>
+                )}
+              </div>
+              <p className="text-gray-600 mb-4 line-clamp-2 group-hover:text-gray-800 transition-colors duration-300">
+                {deck.description || "Түшүндүрмө жок"}
+              </p>
+              <div className="flex items-center justify-between text-sm">
+                <span className="px-3 py-1 bg-blue-50 text-blue-600 rounded-full group-hover:bg-blue-100 transition-colors duration-300">
+                  {deck.subject}
+                </span>
+                <span className="text-gray-500 group-hover:text-gray-700 transition-colors duration-300">
+                  {deck.creator?.username}
+                </span>
+              </div>
             </div>
           </div>
+        ))}
+      </div>
 
-          {/* Меню с кнопкой удаления */}
-          {menuDeckId === String(deck.id) && (
-            <div
-              className="fixed inset-0 bg-black bg-opacity-30 flex justify-center items-center z-50"
-              onClick={handleMenuClose} // Закрыть при клике вне меню
-            >
-              <div
-                className="bg-white p-4 rounded-lg shadow-lg w-48 flex items-center "
-                onClick={(e) => e.stopPropagation()} // Не закрывать при клике внутри меню
+      {/* Модальное окно управления */}
+      {isModalOpen && selectedDeck && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 animate-fadeIn"
+          onClick={handleModalClose}
+        >
+          <div
+            className="bg-white rounded-xl p-6 w-full max-w-md mx-4 animate-slideIn"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex justify-between items-center">
+              <button
+                onClick={handleModalClose}
+                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
               >
+                <X className="w-5 h-5 text-gray-600" />
+              </button>
+            </div>
+
+            <div className="space-y-3">
+              <button
+                onClick={handleEdit}
+                className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-purple-50 text-purple-700 rounded-lg hover:bg-purple-100 transition-colors"
+              >
+                <PencilLine className="w-5 h-5" />
+                <span>Оңдоо</span>
+              </button>
+
+              <button
+                onClick={handleDeleteClick}
+                className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors"
+              >
+                <Trash2 className="w-5 h-5" />
+                <span>Өчүрүү</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Модальное окно подтверждения удаления */}
+      {isDeleteModalOpen && selectedDeck && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 animate-fadeIn"
+          onClick={handleDeleteCancel}
+        >
+          <div
+            className="bg-white rounded-xl p-6 w-full max-w-md mx-4 animate-slideIn"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="text-center">
+              <Trash2 className="w-12 h-12 text-red-500 mx-auto mb-4" />
+              <h3 className="text-xl font-semibold text-gray-800 mb-2">
+                Колоданы өчүрүүнү каалайсызбы?
+              </h3>
+
+              <div className="flex justify-center gap-4">
                 <button
-                  className=" text-red-600 hover:bg-red-100 px-4 py-2 rounded  "
-                  onClick={handleConfirmOpen}
+                  onClick={handleDeleteCancel}
+                  className="px-6 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
                 >
-                  <Trash2 size={20} />
+                  Жок
                 </button>
-                <button onClick={() => handleCardUpdate(String(deck.id))}>
-                  <PencilLine />
+                <button
+                  onClick={handleDeleteConfirm}
+                  className="px-6 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+                >
+                  Ооба
                 </button>
               </div>
             </div>
-          )}
-
-          {/* Окно подтверждения удаления */}
-          {confirmDeckId === String(deck.id) && (
-            <div
-              className="fixed inset-0 bg-black bg-opacity-30 flex justify-center items-center z-50"
-              onClick={handleConfirmClose} // Закрыть при клике вне окна
-            >
-              <div
-                className="bg-white p-6 rounded-xl shadow-lg w-80"
-                onClick={(e) => e.stopPropagation()} // Не закрывать при клике внутри окна
-              >
-                <Trash2 className="mx-auto mb-4 text-red-500" size={40} />
-                <h2 className="text-lg font-semibold mb-4 text-center">
-                  Бул карточканы өчүрөсүзбү?
-                </h2>
-                <div className="flex justify-end gap-3">
-                  <button
-                    className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
-                    onClick={handleConfirmClose}
-                  >
-                    Жок
-                  </button>
-                  <button
-                    className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
-                    onClick={() => handleDelete(String(deck.id))}
-                  >
-                    Ооба, өчүр
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-        </React.Fragment>
-      ))}
-    </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 

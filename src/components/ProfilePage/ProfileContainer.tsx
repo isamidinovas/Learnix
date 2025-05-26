@@ -56,7 +56,7 @@ const ProfileContainer = () => {
         >
           Жеке маалымат
         </button>
-        <button
+        {/* <button
           className={`pb-4 px-4 ${
             activeTab === "security"
               ? "border-b-2 border-blue-600 text-blue-600"
@@ -65,62 +65,62 @@ const ProfileContainer = () => {
           onClick={() => setActiveTab("security")}
         >
           Коопсуздук
-        </button>
+        </button> */}
       </div>
 
-      {activeTab === "profile" ? (
-        <form onSubmit={handleProfileUpdate} className="space-y-6">
-          <div className="grid md:grid-cols-2 gap-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Толук аты-жөнү
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <User size={20} className="text-gray-400" />
-                </div>
-                <input
-                  type="text"
-                  defaultValue={profile.username}
-                  onChange={(e) =>
-                    setProfile({ ...profile, username: e.target.value })
-                  }
-                  className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-                />
+      {/* {activeTab === "profile" ? ( */}
+      <form onSubmit={handleProfileUpdate} className="space-y-6">
+        <div className="grid md:grid-cols-2 gap-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Толук аты-жөнү
+            </label>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <User size={20} className="text-gray-400" />
               </div>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Электрондук почта
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Mail size={20} className="text-gray-400" />
-                </div>
-                <input
-                  type="email"
-                  value={profile.email}
-                  onChange={(e) =>
-                    setProfile({ ...profile, email: e.target.value })
-                  }
-                  className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-                />
-              </div>
+              <input
+                type="text"
+                defaultValue={profile.username}
+                onChange={(e) =>
+                  setProfile({ ...profile, username: e.target.value })
+                }
+                className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+              />
             </div>
           </div>
 
-          <div className="flex justify-end">
-            <button
-              type="submit"
-              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              Сактоо
-            </button>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Электрондук почта
+            </label>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <Mail size={20} className="text-gray-400" />
+              </div>
+              <input
+                type="email"
+                value={profile.email}
+                onChange={(e) =>
+                  setProfile({ ...profile, email: e.target.value })
+                }
+                className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+              />
+            </div>
           </div>
-        </form>
-      ) : (
-        <form onSubmit={handlePasswordChange} className="space-y-6">
+        </div>
+
+        <div className="flex justify-end">
+          {/* <button
+            type="submit"
+            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            Сактоо
+          </button> */}
+        </div>
+      </form>
+      {/* ) : ( */}
+      {/* <form onSubmit={handlePasswordChange} className="space-y-6">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Учурдагы сырсөз
@@ -225,8 +225,8 @@ const ProfileContainer = () => {
               Сырсөздү өзгөртүү
             </button>
           </div>
-        </form>
-      )}
+        </form> */}
+      {/* )} */}
     </div>
   );
 };

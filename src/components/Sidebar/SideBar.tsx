@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
-import { getUser, logoutUser } from "../../store/thunks/authThunk";
+import { logoutUser } from "../../store/thunks/authThunk";
 
 interface SideMenuProps {
   isOpen: boolean;
@@ -16,20 +16,24 @@ const SideMenu: React.FC<SideMenuProps> = ({ isOpen, onClose }) => {
   const user = useAppSelector((state) => state.auth.user);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const handleLogout = () => {
-    dispatch(logoutUser());
+
+  const handleLogout = async () => {
+    await dispatch(logoutUser());
+    setProfile({ username: "", email: "" });
     navigate("/");
   };
+
   useEffect(() => {
-    if (!user) {
-      dispatch(getUser());
-    } else {
+    if (user) {
       setProfile({
         username: user.username,
         email: user.email,
       });
+    } else {
+      setProfile({ username: "", email: "" });
     }
-  }, [dispatch, user]);
+  }, [user]);
+
   return (
     <>
       <div
@@ -40,12 +44,12 @@ const SideMenu: React.FC<SideMenuProps> = ({ isOpen, onClose }) => {
       />
 
       <div
-        className={`fixed  top-0 z-50 md:z-10 md:top-4 left-0 h-full bg-white border-r border-gray-200 w-72 transform transition-transform duration-300 
+        className={`fixed top-0 z-50 md:z-10 md:top-4 left-0 h-full bg-white w-72 transform transition-transform duration-300 
         ${isOpen ? "translate-x-0" : "-translate-x-full"} 
         md:translate-x-0 md:relative md:flex md:w-80`}
       >
         <div className="flex flex-col h-full w-full">
-          <div className="md:hidden flex justify-end p-4 border-b border-gray-200">
+          <div className="md:hidden flex justify-end p-4">
             <button
               onClick={onClose}
               className="text-gray-500 text-2xl font-bold"
@@ -54,7 +58,7 @@ const SideMenu: React.FC<SideMenuProps> = ({ isOpen, onClose }) => {
             </button>
           </div>
 
-          <div className="p-4 border-b border-gray-200">
+          <div className="py-0 px-3 md:py-4 ">
             <div className="flex items-center">
               <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mr-3">
                 <svg
@@ -90,7 +94,7 @@ const SideMenu: React.FC<SideMenuProps> = ({ isOpen, onClose }) => {
             </nav>
           </div>
           {profile.username ? (
-            <div className="md:hidden border-t border-gray-200 p-4">
+            <div className="md:hidden p-4">
               <button
                 onClick={handleLogout}
                 className="w-full bg-gray-100 text-gray-800 py-2 rounded hover:bg-gray-200 transition"
@@ -99,7 +103,7 @@ const SideMenu: React.FC<SideMenuProps> = ({ isOpen, onClose }) => {
               </button>
             </div>
           ) : (
-            <div className="md:hidden border-t border-gray-200 p-4">
+            <div className="md:hidden p-4">
               <button className="w-full bg-gray-100 text-gray-800 py-2 rounded hover:bg-gray-200 transition">
                 <NavLink to="/login">Кирүү </NavLink>
                 <NavLink to="/signup">Катталуу</NavLink>

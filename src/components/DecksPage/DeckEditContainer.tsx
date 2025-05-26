@@ -1,13 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import {
-  createDeck,
-  getDeckById,
-  updateDeck,
-} from "../../store/thunks/deckThunk";
+import { getDeckById, updateDeck } from "../../store/thunks/deckThunk";
 import { DeckData } from "../../types/decks";
 import { useNavigate } from "react-router-dom";
-import { showSuccessToast } from "../../utils/toast";
+import { showErrorToast } from "../../utils/toast";
 import { useAppSelector } from "../../hooks/hooks";
 import { useParams } from "react-router-dom";
 import { RootState } from "../../store";
@@ -34,7 +30,6 @@ const DeckEditContainer: React.FC = () => {
   const [flashcards, setFlashcards] = useState([{ question: "", answer: "" }]);
   const { selectedDeck } = useAppSelector((state: RootState) => state.decks);
   const { id } = useParams();
-  console.log("de:", selectedDeck);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,27 +38,20 @@ const DeckEditContainer: React.FC = () => {
       title,
       description,
       subject,
-
       flashcards,
     };
     if (!id) {
-      console.error("ID колоды жок!");
+      showErrorToast("ID колоды жок!");
       return;
     }
 
     const result = await dispatch(updateDeck({ id: id, data: deckData }));
 
-    if (createDeck.fulfilled.match(result)) {
-      // alert("Колода ийгиликтүү түзүлдү!");
-      showSuccessToast("Колода ийгиликтүү түзүлдү!");
-      setTitle("");
-      setDescription("");
-      setSubject(subjects[0]);
-      setFlashcards([{ question: "", answer: "" }]);
-    } else if (createDeck.rejected.match(result)) {
-      alert("Ката: " + result.payload);
+    if (updateDeck.fulfilled.match(result)) {
+      navigate("/decks");
+    } else if (updateDeck.rejected.match(result)) {
+      showErrorToast("Ката: " + result.payload);
     }
-    navigate("/decks");
   };
 
   const handleFlashcardChange = (
@@ -85,8 +73,8 @@ const DeckEditContainer: React.FC = () => {
     updated.splice(index, 1);
     setFlashcards(updated);
   };
+
   useEffect(() => {
-    console.log("selectedDeck обновился:", selectedDeck);
     if (selectedDeck) {
       setTitle(selectedDeck.title);
       setDescription(selectedDeck.description || "");
@@ -96,11 +84,13 @@ const DeckEditContainer: React.FC = () => {
       );
     }
   }, [selectedDeck]);
+
   useEffect(() => {
     if (id && !selectedDeck) {
       dispatch(getDeckById(id));
     }
   }, [id, selectedDeck, dispatch]);
+
   return (
     <div className="max-w-4xl mx-auto px-4 py-10">
       <h1 className="text-4xl font-bold mb-8 text-center text-indigo-700">
