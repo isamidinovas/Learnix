@@ -5,12 +5,12 @@ import { EllipsisVertical, PencilLine, Trash2, X } from "lucide-react";
 import { removeDeck } from "../../store/thunks/deckThunk";
 import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
 
-interface FlashCard {
+interface FlashCardProps {
   selectedCategory: string;
   decks: DeckDataList[];
 }
 
-const FlashCard: React.FC<FlashCard> = ({ selectedCategory, decks }) => {
+const FlashCard: React.FC<FlashCardProps> = ({ decks }) => {
   const [selectedDeck, setSelectedDeck] = useState<DeckDataList | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -63,15 +63,10 @@ const FlashCard: React.FC<FlashCard> = ({ selectedCategory, decks }) => {
     navigate(`/decks/${id}`);
   };
 
-  const filteredDecks =
-    selectedCategory === "Баары"
-      ? decks
-      : decks.filter((deck) => deck.subject === selectedCategory);
-
   return (
     <>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredDecks.map((deck) => (
+        {decks.map((deck) => (
           <div
             key={deck.id}
             onClick={() => handleCardClick(deck.id.toString())}
@@ -161,7 +156,7 @@ const FlashCard: React.FC<FlashCard> = ({ selectedCategory, decks }) => {
             <div className="text-center">
               <Trash2 className="w-12 h-12 text-red-500 mx-auto mb-4" />
               <h3 className="text-xl font-semibold text-gray-800 mb-2">
-                Колоданы өчүрүүнү каалайсызбы?
+                Карточканы өчүрүүнү каалайсызбы?
               </h3>
 
               <div className="flex justify-center gap-4">

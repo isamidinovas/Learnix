@@ -1,38 +1,32 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { createDeck } from "../../store/thunks/deckThunk";
 import { DeckData } from "../../types/decks";
 import { useNavigate } from "react-router-dom";
-import { showSuccessToast } from "../../utils/toast";
-
-const subjects = [
-  "Математика",
-  "Физика",
-  "Химия",
-  "Биология",
-  "Тарых",
-  "География",
-  "Адабият",
-  "Информатика",
-  "Англис тили",
-  "Башка",
-];
+import { getSubjects } from "../../store/thunks/subjectThunk";
+import { RootState } from "../../store";
+import { useAppSelector } from "../../hooks/hooks";
 
 const DeckCreateContainer: React.FC = () => {
   const dispatch = useDispatch<any>();
   const navigate = useNavigate();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [subject, setSubject] = useState(subjects[0]);
+  const [subjectId, setSubjectId] = useState<number | "">("");
   const [flashcards, setFlashcards] = useState([{ question: "", answer: "" }]);
-
+  const { subjects } = useAppSelector((state: RootState) => state.subjects);
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+    const selectedSubject = subjects.find((s) => s.id === subjectId);
 
+    e.preventDefault();
+    if (!selectedSubject) {
+      alert("Предмет тандаңыз");
+      return;
+    }
     const deckData: DeckData = {
       title,
       description,
-      subject,
+      subject: selectedSubject?.name,
 
       flashcards,
     };
@@ -42,7 +36,8 @@ const DeckCreateContainer: React.FC = () => {
     if (createDeck.fulfilled.match(result)) {
       setTitle("");
       setDescription("");
-      setSubject(subjects[0]);
+      setSubjectId(subjects.length > 0 ? subjects[0].id : "");
+
       setFlashcards([{ question: "", answer: "" }]);
     } else if (createDeck.rejected.match(result)) {
       alert("Ката: " + result.payload);
@@ -69,6 +64,14 @@ const DeckCreateContainer: React.FC = () => {
     updated.splice(index, 1);
     setFlashcards(updated);
   };
+  useEffect(() => {
+    dispatch(getSubjects());
+  }, [dispatch]);
+  useEffect(() => {
+    if (subjects.length > 0 && subjectId === "") {
+      setSubjectId(subjects[0].id);
+    }
+  }, [subjects, subjectId]);
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-10">
@@ -109,13 +112,13 @@ const DeckCreateContainer: React.FC = () => {
               Предмет
             </label>
             <select
-              className="w-full border border-gray-300 p-3 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              value={subject}
-              onChange={(e) => setSubject(e.target.value)}
+              className=" w-[80%] md:w-full border border-gray-300 p-3 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              value={subjectId}
+              onChange={(e) => setSubjectId(Number(e.target.value))}
             >
               {subjects.map((subj) => (
-                <option key={subj} value={subj}>
-                  {subj}
+                <option key={subj.id} value={subj.id}>
+                  {subj.name}
                 </option>
               ))}
             </select>

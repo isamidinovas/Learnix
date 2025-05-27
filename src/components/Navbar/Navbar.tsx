@@ -1,8 +1,8 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
 import { logoutUser } from "../../store/thunks/authThunk";
-import { Menu, X, User } from "lucide-react";
+import { Menu, User } from "lucide-react";
 
 interface NavbarProps {
   onMenuClick: () => void;
@@ -11,9 +11,10 @@ interface NavbarProps {
 const Navbar: React.FC<NavbarProps> = ({ onMenuClick }) => {
   const currentUser = useAppSelector((state) => state.auth.user);
   const dispatch = useAppDispatch();
-
+  const navigate = useNavigate();
   const handleLogout = () => {
     dispatch(logoutUser());
+    navigate("/");
   };
 
   return (

@@ -12,7 +12,7 @@ import {
   Trash2,
   X,
 } from "lucide-react";
-import { showSuccessToast, showErrorToast } from "../../utils/toast";
+import { showErrorToast } from "../../utils/toast";
 
 const DeckDetailContainer: React.FC = () => {
   const { selectedDeck } = useAppSelector((state: RootState) => state.decks);
@@ -45,10 +45,9 @@ const DeckDetailContainer: React.FC = () => {
     if (id) {
       try {
         await dispatch(removeDeck(id));
-        showSuccessToast("Колода ийгиликтүү өчүрүлдү");
         navigate(`/decks`);
       } catch (error) {
-        showErrorToast("Колоданы өчүрүүдө ката кетти");
+        showErrorToast("Карточканы өчүрүүдө ката кетти");
       }
     }
   };
@@ -69,9 +68,7 @@ const DeckDetailContainer: React.FC = () => {
     !selectedDeck.flashcards ||
     selectedDeck.flashcards.length === 0
   ) {
-    return (
-      <div className="text-center mt-10">Колода пустая или не загружена.</div>
-    );
+    return <div className="text-center mt-10">Карточка бош</div>;
   }
 
   const cards = selectedDeck.flashcards;
@@ -208,7 +205,7 @@ const DeckDetailContainer: React.FC = () => {
             <div className="text-center">
               <Trash2 className="w-12 h-12 text-red-500 mx-auto mb-4" />
               <h3 className="text-xl font-semibold text-gray-800 mb-2">
-                Колоданы өчүрүүнү каалайсызбы?
+                Карточканы өчүрүүнү каалайсызбы?
               </h3>
               <div className="flex justify-center gap-4">
                 <button

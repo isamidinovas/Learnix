@@ -1,6 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { LoginData, RegisterData, UserInfo } from "../../types/auth";
 import { showSuccessToast, showErrorToast } from "../../utils/toast";
+import { clearCreatorDecks } from "../reducers/deckSlice";
 
 // Регистрация пользователя
 export const registerUser = createAsyncThunk<
@@ -60,7 +61,7 @@ export const loginUser = createAsyncThunk<
 // Логаут пользователя
 export const logoutUser = createAsyncThunk<void, void>(
   "auth/logoutUser",
-  async (_, { rejectWithValue }) => {
+  async (_, { rejectWithValue, dispatch }) => {
     try {
       const token = localStorage.getItem("access_token");
       if (token) {
@@ -72,6 +73,7 @@ export const logoutUser = createAsyncThunk<void, void>(
         });
       }
       localStorage.removeItem("access_token");
+      dispatch(clearCreatorDecks());
       showSuccessToast("Сиз ийгиликтүү чыктыңыз");
     } catch (error: any) {
       showErrorToast(error.message || "Чыгууда ката кетти");

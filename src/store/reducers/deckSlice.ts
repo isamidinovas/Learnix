@@ -1,5 +1,4 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import type { WritableDraft } from "immer";
+import { createSlice } from "@reduxjs/toolkit";
 
 import {
   createDeck,
@@ -30,12 +29,17 @@ const initialState: DeckState = {
 const decksSlice = createSlice({
   name: "decks",
   initialState,
-  reducers: {},
+  reducers: {
+    clearCreatorDecks(state) {
+      state.creatorDecks = [];
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(getDecks.pending, (state) => {
         state.loading = true;
         state.error = null;
+        state.decks = [];
       })
       .addCase(getDecks.fulfilled, (state, action) => {
         state.decks = action.payload;
@@ -43,7 +47,7 @@ const decksSlice = createSlice({
       })
       .addCase(getDecks.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload || "Ката decks алуу процессинде";
+        state.error = action.payload || "Ката карточка алуу процессинде";
         state.decks = [];
       });
 
@@ -59,7 +63,7 @@ const decksSlice = createSlice({
       })
       .addCase(createDeck.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload || "Колода түзүүдө ката кетти";
+        state.error = action.payload || "Карточка түзүүдө ката кетти";
       });
 
     builder
@@ -73,7 +77,7 @@ const decksSlice = createSlice({
       })
       .addCase(getDeckById.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload || "Колода түзүүдө ката кетти";
+        state.error = action.payload || "Карточка түзүүдө ката кетти";
       });
 
     builder
@@ -87,7 +91,7 @@ const decksSlice = createSlice({
       })
       .addCase(getMyDecksList.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload || "Колодаларды алууда ката кетти";
+        state.error = action.payload || "Карточкаларды алууда ката кетти";
       });
 
     builder
@@ -106,7 +110,7 @@ const decksSlice = createSlice({
       })
       .addCase(removeDeck.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload || "Колоданы өчүрүүдө ката кетти";
+        state.error = action.payload || "Карточканы өчүрүүдө ката кетти";
       });
 
     builder
@@ -127,9 +131,9 @@ const decksSlice = createSlice({
       })
       .addCase(updateDeck.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload || "Колоданы жаңыртууда ката кетти";
+        state.error = action.payload || "карточканы жаңыртууда ката кетти";
       });
   },
 });
-
+export const { clearCreatorDecks } = decksSlice.actions;
 export default decksSlice.reducer;

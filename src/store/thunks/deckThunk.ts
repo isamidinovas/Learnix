@@ -2,16 +2,6 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import { DeckData, DeckDataList } from "../../types/decks";
 import { showSuccessToast, showErrorToast } from "../../utils/toast";
 
-interface FlashcardData {
-  id: number;
-  question: string;
-  answer: string;
-}
-
-interface SearchParams {
-  title?: string;
-}
-
 interface GetDecksParams {
   title?: string;
   subject?: string;
@@ -37,14 +27,14 @@ export const createDeck = createAsyncThunk<
 
     if (!response.ok) {
       const errorData = await response.json();
-      showErrorToast(errorData.detail || "Колоданы түзүү мүмкүн болбоду");
+      showErrorToast(errorData.detail || "Карточка түзүү мүмкүн болбоду");
       return rejectWithValue(
-        errorData.detail || "Колоданы түзүү мүмкүн болбоду"
+        errorData.detail || "Карточка түзүү мүмкүн болбоду"
       );
     }
 
     const data = await response.json();
-    showSuccessToast("Колода ийгиликтүү түзүлдү");
+    showSuccessToast("Карточка ийгиликтүү түзүлдү");
     return data;
   } catch (error: any) {
     showErrorToast(error.message || "Серверге туташуу мүмкүн болбоду");
@@ -69,21 +59,21 @@ export const getDecks = createAsyncThunk<
     );
 
     if (!response.ok) {
-      throw new Error("Колодаларды алууда ката кетти");
+      throw new Error("Карточкаларды алууда ката кетти");
     }
 
     const data = await response.json();
     return data;
   } catch (error) {
-    return rejectWithValue("Колодаларды алууда ката кетти");
+    return rejectWithValue("Карточкаларды алууда ката кетти");
   }
 });
 
 export const getMyDecksList = createAsyncThunk<
   DeckDataList[],
-  { title?: string },
+  { title?: string; subject?: string },
   { rejectValue: string }
->("decks/getMyDecksList", async ({ title }, { rejectWithValue }) => {
+>("decks/getMyDecksList", async ({ title, subject }, { rejectWithValue }) => {
   try {
     const token = localStorage.getItem("access_token");
     const headers: HeadersInit = {
@@ -95,7 +85,9 @@ export const getMyDecksList = createAsyncThunk<
     if (title) {
       url.searchParams.append("title", title);
     }
-
+    if (subject && subject !== "Баары") {
+      url.searchParams.append("subject", subject);
+    }
     const response = await fetch(url.toString(), {
       method: "GET",
       headers,
@@ -104,7 +96,7 @@ export const getMyDecksList = createAsyncThunk<
     if (!response.ok) {
       const errorData = await response.json();
       return rejectWithValue(
-        errorData.detail || "Колодаларды алуу мүмкүн болбоду"
+        errorData.detail || "Карточкаларды алуу мүмкүн болбоду"
       );
     }
 
@@ -136,7 +128,7 @@ export const getDeckById = createAsyncThunk<
     if (!response.ok) {
       const errorData = await response.json();
       return rejectWithValue(
-        errorData.detail || "Колодаларды алуу мүмкүн болбоду"
+        errorData.detail || "Карточкаларды алуу мүмкүн болбоду"
       );
     }
 
@@ -166,13 +158,13 @@ export const removeDeck = createAsyncThunk<
 
     if (!response.ok) {
       const errorData = await response.json();
-      showErrorToast(errorData.detail || "Колоданы өчүрүү мүмкүн болбоду");
+      showErrorToast(errorData.detail || "Карточка өчүрүү мүмкүн болбоду");
       return rejectWithValue(
-        errorData.detail || "Колоданы өчүрүү мүмкүн болбоду"
+        errorData.detail || "Карточка өчүрүү мүмкүн болбоду"
       );
     }
 
-    showSuccessToast("Колода ийгиликтүү өчүрүлдү");
+    showSuccessToast("Карточка ийгиликтүү өчүрүлдү");
 
     return id;
   } catch (error: any) {
@@ -202,14 +194,14 @@ export const updateDeck = createAsyncThunk<
 
     if (!response.ok) {
       const errorData = await response.json();
-      showErrorToast(errorData.detail || "Колоданы өзгөртүү мүмкүн болбоду");
+      showErrorToast(errorData.detail || "Карточка өзгөртүү мүмкүн болбоду");
       return rejectWithValue(
-        errorData.detail || "Колоданы өзгөртүү мүмкүн болбоду"
+        errorData.detail || "Карточка өзгөртүү мүмкүн болбоду"
       );
     }
 
     const result = await response.json();
-    showSuccessToast("Колода ийгиликтүү жаңыртылды");
+    showSuccessToast("Карточка ийгиликтүү жаңыртылды");
 
     return result;
   } catch (error: any) {

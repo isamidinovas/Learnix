@@ -20,41 +20,45 @@ const DecksContainer: React.FC = () => {
   const { subjects, loading: subjectsLoading } = useAppSelector(
     (state: RootState) => state.subjects
   );
+  const { creatorDecks } = useAppSelector((state) => state.decks);
+  const [search, setSearch] = useState("");
   const { decks, loading: decksLoading } = useAppSelector(
     (state: RootState) => state.decks
   );
   const [selectedCategory, setSelectedCategory] = useState("Баары");
 
   useEffect(() => {
-    dispatch(getDecks({ subject: selectedCategory }));
+    dispatch(getDecks({ title: search, subject: selectedCategory }));
     if (user) {
-      dispatch(getMyDecksList({}));
+      dispatch(getMyDecksList({ title: search, subject: selectedCategory }));
     }
-    dispatch(getSubjects());
-  }, [dispatch, user, selectedCategory]);
+  }, [search, selectedCategory, user]);
 
+  useEffect(() => {
+    dispatch(getSubjects());
+  }, [dispatch]);
   const handleCategoryChange = (category: string) => {
     setSelectedCategory(category);
   };
 
-  console.log("Decks:", decks); // Отладочная информация
   console.log("Decks length:", decks?.length); // Отладочная информация
 
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold text-gray-800">Флэшкарталар</h1>
-        <NavLink
-          to={
-            user && localStorage.getItem("access_token")
-              ? "/decks/create"
-              : "/signup"
-          }
-          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-        >
-          <SquarePlus className="w-5 h-5" />
-          <span>Жаңы</span>
-        </NavLink>
+        <div className="w-full">
+          <h1 className="text-2xl font-bold mb-4">
+            Каалаган тема боюнча карточкаларды тап
+          </h1>
+          <input
+            type="text"
+            value={search}
+            name="search"
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Карточкаларды изде..."
+            className="w-full p-3 rounded-full border border-purple-300 focus:outline-none"
+          />
+        </div>
       </div>
 
       <div className="mb-8">
@@ -98,15 +102,45 @@ const DecksContainer: React.FC = () => {
           )}
         </div>
       </div>
+      <div className="flex justify-between  items-center">
+        <h2 className="text-xl font-semibold mt-6 mb-6">
+          Сиздин карточкаларыңыз
+        </h2>
+        <NavLink
+          to={
+            user && localStorage.getItem("access_token")
+              ? "/decks/create"
+              : "/signup"
+          }
+          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+        >
+          <SquarePlus className="w-5 h-5" />
+          <span>Жаңы</span>
+        </NavLink>
+      </div>
 
+      {creatorDecks.length === 0 ? (
+        <h3>Сизде азырынча карточка жок!</h3>
+      ) : (
+        <div className=" mb-6">
+          {creatorDecks && (
+            <FlashCard
+              decks={creatorDecks}
+              selectedCategory={selectedCategory}
+            />
+          )}
+        </div>
+      )}
+
+      <h2 className="text-xl font-semibold mt-6 mb-6">Баардык карточкалар</h2>
       {decksLoading ? (
         <div className="flex justify-center items-center h-64">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
         </div>
-      ) : !subjects ? (
+      ) : !decks || decks.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-16 bg-gray-50 rounded-xl shadow-sm">
           <p className="text-gray-600 text-xl font-medium mb-2">
-            "Азырынча колодалар жок"
+            Азырынча карточкалар табылган жок
           </p>
         </div>
       ) : (
