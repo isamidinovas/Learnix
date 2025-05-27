@@ -30,13 +30,11 @@ const AIChatContainer: React.FC = () => {
       file: file,
     };
 
-    // Формируем новую историю: все старые сообщения + новое сообщение
     const newMessagesHistory = [...messages, userMessage];
 
     setMessages(newMessagesHistory);
     setLoading(true);
 
-    // Передаем всю историю на бекенд
     dispatch(chatWithDocumentAsync({ file, messages: newMessagesHistory }))
       .then((action) => {
         const geminiMessage = {
@@ -57,39 +55,6 @@ const AIChatContainer: React.FC = () => {
 
     handleReset();
   };
-
-  // const handleSubmit = () => {
-  //   if (!prompt && !file) return;
-
-  //   const userMessage = {
-  //     role: "user",
-  //     text: prompt,
-  //     fileName: file?.name,
-  //   };
-
-  //   setMessages((prevMessages) => [...prevMessages, userMessage]);
-  //   setLoading(true);
-
-  //   dispatch(chatWithDocumentAsync({ file, prompt }))
-  //     .then((action) => {
-  //       const geminiMessage = {
-  //         role: "gemini",
-  //         text: action.payload as string,
-  //       };
-  //       setMessages((prevMessages) => [...prevMessages, geminiMessage]);
-  //       setLoading(false);
-  //     })
-  //     .catch((action) => {
-  //       const errorMessage = {
-  //         role: "gemini",
-  //         text: `Error: ${action.payload as string}`,
-  //       };
-  //       setMessages((prevMessages) => [...prevMessages, errorMessage]);
-  //       setLoading(false);
-  //     });
-
-  //   handleReset();
-  // };
 
   const handleReset = () => {
     dispatch(resetState());

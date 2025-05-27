@@ -32,7 +32,7 @@ const DecksContainer: React.FC = () => {
     if (user) {
       dispatch(getMyDecksList({ title: search, subject: selectedCategory }));
     }
-  }, [search, selectedCategory, user]);
+  });
 
   useEffect(() => {
     dispatch(getSubjects());

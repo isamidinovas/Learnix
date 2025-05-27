@@ -35,6 +35,12 @@ const Navbar: React.FC<NavbarProps> = ({ onMenuClick }) => {
           <div className="flex items-center gap-4">
             {currentUser ? (
               <div className="flex items-center gap-4">
+                <button
+                  onClick={handleLogout}
+                  className="hidden md:block px-4 py-2 text-blue-600 border border-blue-600 rounded-lg hover:bg-blue-50 transition-colors"
+                >
+                  Чыгуу
+                </button>
                 <NavLink
                   to="/profile"
                   className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
@@ -44,12 +50,6 @@ const Navbar: React.FC<NavbarProps> = ({ onMenuClick }) => {
                     {currentUser.username}
                   </span>
                 </NavLink>
-                <button
-                  onClick={handleLogout}
-                  className="hidden md:block px-4 py-2 text-blue-600 border border-blue-600 rounded-lg hover:bg-blue-50 transition-colors"
-                >
-                  Чыгуу
-                </button>
               </div>
             ) : (
               <div className="hidden md:flex items-center gap-3">
