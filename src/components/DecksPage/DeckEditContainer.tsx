@@ -7,41 +7,30 @@ import { showErrorToast } from "../../utils/toast";
 import { useAppSelector } from "../../hooks/hooks";
 import { useParams } from "react-router-dom";
 import { RootState } from "../../store";
-
-const subjects = [
-  "Математика",
-  "Физика",
-  "Химия",
-  "Биология",
-  "Тарых",
-  "География",
-  "Адабият",
-  "Информатика",
-  "Англис тили",
-  "Башка",
-];
+import { getSubjects } from "../../store/thunks/subjectThunk";
 
 const DeckEditContainer: React.FC = () => {
   const dispatch = useDispatch<any>();
   const navigate = useNavigate();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [subject, setSubject] = useState(subjects[0]);
+  const [subjectId, setSubjectId] = useState<number | "">("");
   const [flashcards, setFlashcards] = useState([{ question: "", answer: "" }]);
   const { selectedDeck } = useAppSelector((state: RootState) => state.decks);
   const { id } = useParams();
-
+  const { subjects } = useAppSelector((state: RootState) => state.subjects);
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const selectedSubject = subjects.find((s) => s.id === subjectId);
 
     const deckData: DeckData = {
       title,
       description,
-      subject,
+      subject: selectedSubject?.name || "",
       flashcards,
     };
     if (!id) {
-      showErrorToast("ID колоды жок!");
+      showErrorToast("ID карточка жок!");
       return;
     }
 
@@ -74,22 +63,31 @@ const DeckEditContainer: React.FC = () => {
     setFlashcards(updated);
   };
 
-  useEffect(() => {
-    if (selectedDeck) {
-      setTitle(selectedDeck.title);
-      setDescription(selectedDeck.description || "");
-      setSubject(selectedDeck.subject);
-      setFlashcards(
-        selectedDeck.flashcards?.map((card) => ({ ...card })) || []
-      );
-    }
-  }, [selectedDeck]);
+  // useEffect(() => {
+  //   if (selectedDeck) {
+  //     setTitle(selectedDeck.title);
+  //     setDescription(selectedDeck.description || "");
+  //     setSubjectId(selectedDeck.subject);
+  //     setFlashcards(
+  //       selectedDeck.flashcards?.map((card) => ({ ...card })) || []
+  //     );
+  //   }
+  // }, [selectedDeck]);
 
   useEffect(() => {
     if (id && !selectedDeck) {
       dispatch(getDeckById(id));
     }
   }, [id, selectedDeck, dispatch]);
+
+  useEffect(() => {
+    dispatch(getSubjects());
+  }, [dispatch]);
+  useEffect(() => {
+    if (subjects.length > 0 && subjectId === "") {
+      setSubjectId(subjects[0].id);
+    }
+  }, [subjects, subjectId]);
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-10">
@@ -130,13 +128,13 @@ const DeckEditContainer: React.FC = () => {
               Предмет
             </label>
             <select
-              className="w-full border border-gray-300 p-3 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              value={subject}
-              onChange={(e) => setSubject(e.target.value)}
+              className=" w-[80%] md:w-full border border-gray-300 p-3 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              value={subjectId}
+              onChange={(e) => setSubjectId(Number(e.target.value))}
             >
               {subjects.map((subj) => (
-                <option key={subj} value={subj}>
-                  {subj}
+                <option key={subj.id} value={subj.id}>
+                  {subj.name}
                 </option>
               ))}
             </select>

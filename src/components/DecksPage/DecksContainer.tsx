@@ -32,7 +32,7 @@ const DecksContainer: React.FC = () => {
     if (user) {
       dispatch(getMyDecksList({ title: search, subject: selectedCategory }));
     }
-  });
+  }, [search, selectedCategory, user, dispatch]);
 
   useEffect(() => {
     dispatch(getSubjects());
@@ -40,8 +40,6 @@ const DecksContainer: React.FC = () => {
   const handleCategoryChange = (category: string) => {
     setSelectedCategory(category);
   };
-
-  console.log("Decks length:", decks?.length); // Отладочная информация
 
   return (
     <div className="container mx-auto px-4 py-8">

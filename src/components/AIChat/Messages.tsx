@@ -39,7 +39,7 @@ export const Messages: React.FC<MessagesProps> = ({ messages, loading }) => {
                 <img
                   src={URL.createObjectURL(msg.file)}
                   alt={msg.file.name}
-                  className="rounded-lg border max-h-64 object-contain"
+                  className="rounded-lg border max-h-40 object-contain"
                 />
               ) : (
                 <div className="inline-flex items-center gap-2 px-3 py-1 text-sm text-blue-700 bg-blue-200 rounded-full">
