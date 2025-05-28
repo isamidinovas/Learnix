@@ -63,22 +63,19 @@ const DeckEditContainer: React.FC = () => {
     setFlashcards(updated);
   };
 
-  // useEffect(() => {
-  //   if (selectedDeck) {
-  //     setTitle(selectedDeck.title);
-  //     setDescription(selectedDeck.description || "");
-  //     setSubjectId(selectedDeck.subject);
-  //     setFlashcards(
-  //       selectedDeck.flashcards?.map((card) => ({ ...card })) || []
-  //     );
-  //   }
-  // }, [selectedDeck]);
-
   useEffect(() => {
-    if (id && !selectedDeck) {
-      dispatch(getDeckById(id));
+    if (selectedDeck) {
+      setTitle(selectedDeck.title);
+      setDescription(selectedDeck.description || "");
+      // setSubjectId(selectedDeck.subject);
+      if (id && !selectedDeck) {
+        dispatch(getDeckById(id));
+      }
+      setFlashcards(
+        selectedDeck.flashcards?.map((card) => ({ ...card })) || []
+      );
     }
-  }, [id, selectedDeck, dispatch]);
+  }, [selectedDeck]);
 
   useEffect(() => {
     dispatch(getSubjects());
