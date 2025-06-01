@@ -1,10 +1,17 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Messages from "./Messages";
 import { useAppDispatch } from "../../hooks/hooks";
 import { chatWithDocumentAsync } from "../../store/thunks/chatThunk";
 import { resetState } from "../../store/reducers/chatSlice";
-import { CircleArrowLeft, CircleArrowRight, Paperclip, X } from "lucide-react";
+import {
+  CircleArrowLeft,
+  CircleArrowRight,
+  Paperclip,
+  X,
+  Mic,
+} from "lucide-react";
 import { NavLink } from "react-router-dom";
+import { SpeechRecognition } from "../../types/speech";
 
 const AIChatContainer: React.FC = () => {
   const [messages, setMessages] = useState<
@@ -13,14 +20,10 @@ const AIChatContainer: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [file, setFile] = useState<File | undefined>();
   const [prompt, setPrompt] = useState("");
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const [recording, setRecording] = useState(false);
   const dispatch = useAppDispatch();
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setFile(e.target.files[0]);
-      e.target.value = "";
-    }
-  };
   const handleSubmit = () => {
     if (!prompt && !file) return;
 
@@ -31,7 +34,6 @@ const AIChatContainer: React.FC = () => {
     };
 
     const newMessagesHistory = [...messages, userMessage];
-
     setMessages(newMessagesHistory);
     setLoading(true);
 
@@ -62,11 +64,53 @@ const AIChatContainer: React.FC = () => {
     setPrompt("");
   };
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setFile(e.target.files[0]);
+      e.target.value = "";
+    }
+  };
+  const toggleRecording = async () => {
+    if (recording) {
+      mediaRecorderRef.current?.stop();
+      setRecording(false);
+    } else {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          audio: true,
+        });
+        const mediaRecorder = new MediaRecorder(stream);
+        const audioChunks: Blob[] = [];
+
+        mediaRecorder.ondataavailable = (event) => {
+          if (event.data.size > 0) {
+            audioChunks.push(event.data);
+          }
+        };
+
+        mediaRecorder.onstop = () => {
+          const audioBlob = new Blob(audioChunks, { type: "audio/webm" });
+          const audioFile = new File([audioBlob], "recording.webm", {
+            type: "audio/webm",
+          });
+          setFile(audioFile);
+        };
+
+        mediaRecorderRef.current = mediaRecorder;
+        mediaRecorder.start();
+        setRecording(true);
+      } catch (err) {
+        console.error("Audio recording error:", err);
+        alert("Аудио жаздырууга уруксат бериңиз.");
+      }
+    }
+  };
+
   return (
     <div className="h-screen flex flex-col">
-      <div className="px-4  flex flex-col md:flex-row items-center  md:mt-0">
+      <div className="px-4 flex flex-col md:flex-row items-center md:mt-0">
         <div className="self-start md:self-center">
-          <NavLink to="/" className=" border-gray-600 text-gray-600 p-2  ">
+          <NavLink to="/" className="border-gray-600 text-gray-600 p-2">
             <CircleArrowLeft className="w-12 h-7 md:h-9" />
           </NavLink>
         </div>
@@ -87,7 +131,7 @@ const AIChatContainer: React.FC = () => {
       <div className="px-4 py-4 border-t bg-white">
         <div className="relative w-full max-w-4xl mx-auto p-4 space-y-2">
           {file && (
-            <div className="flex flex-col gap-2 px-4 py-2  text-sm text-gray-700 max-w-[170px]">
+            <div className="flex flex-col gap-2 px-4 py-2 text-sm text-gray-700 max-w-[170px]">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Paperclip className="w-4 h-4 text-gray-500" />
@@ -105,10 +149,16 @@ const AIChatContainer: React.FC = () => {
                   className="rounded-lg border max-h-64 object-contain"
                 />
               )}
+              {file.type.startsWith("audio/") && (
+                <audio
+                  controls
+                  className="max-w-xs mt-2"
+                  src={URL.createObjectURL(file)}
+                />
+              )}
             </div>
           )}
-
-          <div className="relative">
+          <div className="w-full border border-neutral-300 rounded-2xl bg-white px-4 pt-4 pb-2">
             <input
               type="text"
               placeholder="Жазыңыз..."
@@ -116,26 +166,43 @@ const AIChatContainer: React.FC = () => {
               disabled={loading}
               onChange={(e) => setPrompt(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
-              className="w-full pl-14 pr-12 py-6 text-xl text-gray-800 bg-white rounded-2xl border border-neutral-300 focus:border-gray-500 focus:outline-none transition"
+              className="w-full text-xl text-gray-800 bg-white rounded-2xl border-none focus:outline-none focus:ring-0 focus:border-none"
             />
-
-            <label className="absolute left-4 bottom-5 cursor-pointer">
-              <input
-                type="file"
-                onChange={handleFileChange}
-                disabled={loading}
-                accept=".docx,.pdf,.png,.jpg,.gif,.jpeg,.svg"
-                className="hidden"
-              />
-              <Paperclip className="size-6 text-gray-600 hover:text-black transition" />
-            </label>
-
-            <CircleArrowRight
-              className={`absolute right-4 bottom-5 size-7 text-gray-600 transition cursor-pointer hover:text-black ${
-                loading ? "pointer-events-none opacity-50" : ""
-              }`}
-              onClick={handleSubmit}
-            />
+            <div className="flex items-center justify-between mt-3 px-1">
+              <div className="flex gap-3">
+                <label className="cursor-pointer">
+                  <input
+                    type="file"
+                    onChange={handleFileChange}
+                    disabled={loading}
+                    accept=".docx,.pdf,.webm,.png,.jpg,.gif,.jpeg,.svg,audio/*"
+                    className="hidden"
+                  />
+                  <Paperclip className="size-6 text-gray-600 hover:text-black transition" />
+                </label>
+                <button
+                  type="button"
+                  title={recording ? "Токтотуу" : "Жаздырууну баштоо"}
+                  onClick={toggleRecording}
+                  disabled={loading}
+                >
+                  <Mic
+                    className={`size-6 transition ${
+                      recording
+                        ? "text-red-600 animate-pulse"
+                        : "text-gray-600 hover:text-black"
+                    }`}
+                  />
+                </button>
+              </div>
+              <button onClick={handleSubmit} disabled={loading}>
+                <CircleArrowRight
+                  className={`size-7 text-gray-600 transition hover:text-black ${
+                    loading ? "opacity-50 pointer-events-none" : ""
+                  }`}
+                />
+              </button>
+            </div>
           </div>
         </div>
       </div>
