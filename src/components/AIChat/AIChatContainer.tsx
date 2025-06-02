@@ -33,7 +33,7 @@ const AIChatContainer: React.FC = () => {
 
   const [showFileInputOptions, setShowFileInputOptions] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-
+  const fileOptionsRef = useRef<HTMLDivElement>(null);
   const videoPreviewRef = useRef<HTMLVideoElement>(null);
   const [isCameraActive, setIsCameraActive] = useState(false);
   const [isRecordingVideo, setIsRecordingVideo] = useState(false);
@@ -252,12 +252,6 @@ const AIChatContainer: React.FC = () => {
     }
   };
 
-  const toggleCameraFacingMode = () => {
-    setCameraFacingMode((prevMode) =>
-      prevMode === "user" ? "environment" : "user"
-    );
-  };
-
   const toggleRecording = async () => {
     if (recording) {
       mediaRecorderRef.current?.stop();
@@ -293,6 +287,29 @@ const AIChatContainer: React.FC = () => {
       }
     }
   };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      // Проверяем, если меню открыто И клик произошел вне контейнера опций файла
+      // И клик не был по кнопке Paperclip, которая открывает меню
+      if (
+        showFileInputOptions &&
+        fileOptionsRef.current &&
+        !fileOptionsRef.current.contains(event.target as Node) &&
+        !(event.target as HTMLElement).closest("button[title='Файл кошуу']")
+      ) {
+        setShowFileInputOptions(false);
+      }
+    };
+
+    // Добавляем слушатель событий на весь документ
+    document.addEventListener("mousedown", handleClickOutside);
+
+    // Очищаем слушатель событий при размонтировании компонента
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showFileInputOptions]);
 
   const handlePaste = useCallback(
     (e: React.ClipboardEvent<HTMLInputElement>) => {
@@ -442,7 +459,10 @@ const AIChatContainer: React.FC = () => {
                     </button>
 
                     {showFileInputOptions && (
-                      <div className="absolute bottom-full mb-2 right-0 bg-white shadow-lg rounded-lg py-2 z-10 w-48">
+                      <div
+                        ref={fileOptionsRef}
+                        className="absolute bottom-full mb-2 right-0 bg-white shadow-lg rounded-lg py-2 z-10 w-48"
+                      >
                         <button
                           type="button"
                           onClick={() => openFileInputWithType("*/*")}
