@@ -445,35 +445,11 @@ const AIChatContainer: React.FC = () => {
                       <div className="absolute bottom-full mb-2 right-0 bg-white shadow-lg rounded-lg py-2 z-10 w-48">
                         <button
                           type="button"
-                          onClick={() => openFileInputWithType("image/*")}
-                          disabled={loading}
-                          className="flex items-center gap-2 px-4 py-2 text-gray-700 hover:bg-gray-100 w-full text-left"
-                        >
-                          <Image className="size-5" /> Сүрөт тандоо
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => openFileInputWithType("video/*")}
-                          disabled={loading}
-                          className="flex items-center gap-2 px-4 py-2 text-gray-700 hover:bg-gray-100 w-full text-left"
-                        >
-                          <Video className="size-5" /> Видео тандоо
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => openFileInputWithType("audio/*")}
-                          disabled={loading}
-                          className="flex items-center gap-2 px-4 py-2 text-gray-700 hover:bg-gray-100 w-full text-left"
-                        >
-                          <Mic className="size-5" /> Аудио тандоо
-                        </button>
-                        <button
-                          type="button"
                           onClick={() => openFileInputWithType("*/*")}
                           disabled={loading}
                           className="flex items-center gap-2 px-4 py-2 text-gray-700 hover:bg-gray-100 w-full text-left"
                         >
-                          <FileText className="size-5" /> Башка файлды тандоо
+                          <FileText className="size-5" /> Файл тандоо
                         </button>
                       </div>
                     )}
@@ -482,6 +458,7 @@ const AIChatContainer: React.FC = () => {
                   <input
                     type="file"
                     ref={fileInputRef}
+                    onClick={() => openFileInputWithType("*/*")}
                     onChange={handleFileInputChange}
                     className="hidden"
                   />
