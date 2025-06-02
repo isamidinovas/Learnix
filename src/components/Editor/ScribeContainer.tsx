@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import "react-quill/dist/quill.snow.css";
 import { Mic, Share2, Menu } from "lucide-react";
 import RichTextEditor from "./RichTextEditor";
 import ScribeSideBar from "./ScribeSideBar";

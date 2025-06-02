@@ -11,6 +11,7 @@ import {
   Mic,
 } from "lucide-react";
 import { NavLink } from "react-router-dom";
+import imageCompression from "browser-image-compression";
 
 const AIChatContainer: React.FC = () => {
   const [messages, setMessages] = useState<
@@ -77,14 +78,68 @@ const AIChatContainer: React.FC = () => {
     setPrompt("");
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const selectedFile = e.target.files[0];
-      setFile(selectedFile);
+  // const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   if (e.target.files && e.target.files[0]) {
+  //     const selectedFile = e.target.files[0];
+  //     setFile(selectedFile);
+  //     if (fileUrl) {
+  //       URL.revokeObjectURL(fileUrl);
+  //     }
+  //     setFileUrl(URL.createObjectURL(selectedFile));
+  //     e.target.value = "";
+  //   }
+  // };
+  const _setFileAndUrl = useCallback(
+    (newFile: File | undefined) => {
+      setFile(newFile);
       if (fileUrl) {
         URL.revokeObjectURL(fileUrl);
       }
-      setFileUrl(URL.createObjectURL(selectedFile));
+      if (newFile) {
+        setFileUrl(URL.createObjectURL(newFile));
+      } else {
+        setFileUrl(undefined);
+      }
+    },
+    [fileUrl]
+  );
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const originalFile = e.target.files[0];
+
+      if (originalFile.type.startsWith("image/")) {
+        console.log(
+          "originalFile instanceof Blob",
+          originalFile instanceof Blob
+        );
+        console.log(`originalFile size ${originalFile.size / 1024 / 1024} MB`);
+
+        const options = {
+          maxSizeMB: 1,
+          maxWidthOrHeight: 1920,
+          useWebWorker: true,
+        };
+
+        try {
+          const compressedFile = await imageCompression(originalFile, options);
+          console.log(
+            `compressedFile size ${compressedFile.size / 1024 / 1024} MB`
+          );
+
+          const newFile = new File([compressedFile], originalFile.name, {
+            type: compressedFile.type,
+          });
+
+          _setFileAndUrl(newFile);
+        } catch (error) {
+          console.error("Image compression failed:", error);
+
+          _setFileAndUrl(originalFile);
+        }
+      } else {
+        _setFileAndUrl(originalFile);
+      }
       e.target.value = "";
     }
   };
