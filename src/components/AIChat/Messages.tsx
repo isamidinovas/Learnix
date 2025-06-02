@@ -47,6 +47,14 @@ export const Messages: React.FC<MessagesProps> = ({ messages, loading }) => {
                 <audio controls className="mt-2 max-w-full" src={msg.fileUrl}>
                   Your browser does not support the audio element.
                 </audio>
+              ) : msg.file.type.startsWith("video/") ? (
+                <video
+                  controls
+                  className="mt-2 max-w-full rounded-lg border max-h-40 object-contain"
+                  src={msg.fileUrl}
+                >
+                  Your browser does not support the video element.
+                </video>
               ) : (
                 <div className="inline-flex items-center gap-2 px-3 py-1 text-sm text-blue-700 bg-blue-200 rounded-full">
                   <Paperclip className="w-4 h-4" />

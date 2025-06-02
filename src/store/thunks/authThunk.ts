@@ -3,7 +3,6 @@ import { LoginData, RegisterData, UserInfo } from "../../types/auth";
 import { showSuccessToast, showErrorToast } from "../../utils/toast";
 import { clearCreatorDecks } from "../reducers/deckSlice";
 
-// Регистрация пользователя
 export const registerUser = createAsyncThunk<
   void,
   RegisterData,
@@ -27,9 +26,8 @@ export const registerUser = createAsyncThunk<
   }
 });
 
-// Логин пользователя
 export const loginUser = createAsyncThunk<
-  string, // вернем токен
+  string,
   LoginData,
   { rejectValue: string }
 >("auth/loginUser", async (data, { dispatch, rejectWithValue }) => {
@@ -58,7 +56,6 @@ export const loginUser = createAsyncThunk<
   }
 });
 
-// Логаут пользователя
 export const logoutUser = createAsyncThunk<void, void>(
   "auth/logoutUser",
   async (_, { rejectWithValue, dispatch }) => {
@@ -82,7 +79,6 @@ export const logoutUser = createAsyncThunk<void, void>(
   }
 );
 
-// Получение информации о пользователе
 export const getUser = createAsyncThunk<
   UserInfo,
   void,
