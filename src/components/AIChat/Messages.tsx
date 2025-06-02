@@ -5,12 +5,14 @@ interface Message {
   role: string;
   text: string;
   file?: File;
+  fileUrl?: string;
 }
 
 interface MessagesProps {
   messages: Message[];
   loading: boolean;
 }
+
 export const Messages: React.FC<MessagesProps> = ({ messages, loading }) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -21,7 +23,7 @@ export const Messages: React.FC<MessagesProps> = ({ messages, loading }) => {
   }, [messages]);
 
   return (
-    <div className="flex flex-col gap-4 py-4">
+    <div className="flex flex-col gap-4 py-4" ref={containerRef}>
       {messages.map((msg, idx) => (
         <div
           key={idx}
@@ -33,7 +35,7 @@ export const Messages: React.FC<MessagesProps> = ({ messages, loading }) => {
         >
           <p className="mb-2 whitespace-pre-wrap">{msg.text}</p>
 
-          {msg.file && (
+          {msg.file && msg.fileUrl && (
             <div className="mt-2">
               {msg.file.type.startsWith("image/") ? (
                 <img
@@ -42,11 +44,7 @@ export const Messages: React.FC<MessagesProps> = ({ messages, loading }) => {
                   className="rounded-lg border max-h-40 object-contain"
                 />
               ) : msg.file.type.startsWith("audio/") ? (
-                <audio
-                  controls
-                  className="mt-2 max-w-full"
-                  src={URL.createObjectURL(msg.file)}
-                >
+                <audio controls className="mt-2 max-w-full" src={msg.fileUrl}>
                   Your browser does not support the audio element.
                 </audio>
               ) : (
@@ -55,6 +53,15 @@ export const Messages: React.FC<MessagesProps> = ({ messages, loading }) => {
                   {msg.file.name}
                 </div>
               )}
+            </div>
+          )}
+
+          {msg.file && !msg.fileUrl && (
+            <div className="mt-2">
+              <div className="inline-flex items-center gap-2 px-3 py-1 text-sm text-blue-700 bg-blue-200 rounded-full">
+                <Paperclip className="w-4 h-4" />
+                {msg.file.name}
+              </div>
             </div>
           )}
         </div>
@@ -68,4 +75,5 @@ export const Messages: React.FC<MessagesProps> = ({ messages, loading }) => {
     </div>
   );
 };
+
 export default Messages;

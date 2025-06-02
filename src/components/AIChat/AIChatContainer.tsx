@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import Messages from "./Messages";
 import { useAppDispatch } from "../../hooks/hooks";
 import { chatWithDocumentAsync } from "../../store/thunks/chatThunk";
@@ -11,18 +11,26 @@ import {
   Mic,
 } from "lucide-react";
 import { NavLink } from "react-router-dom";
-import { SpeechRecognition } from "../../types/speech";
 
 const AIChatContainer: React.FC = () => {
   const [messages, setMessages] = useState<
-    { role: string; text: string; file?: File }[]
+    { role: string; text: string; file?: File; fileUrl?: string }[]
   >([]);
   const [loading, setLoading] = useState(false);
   const [file, setFile] = useState<File | undefined>();
+  const [fileUrl, setFileUrl] = useState<string | undefined>();
   const [prompt, setPrompt] = useState("");
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const [recording, setRecording] = useState(false);
   const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    return () => {
+      if (fileUrl) {
+        URL.revokeObjectURL(fileUrl);
+      }
+    };
+  }, [fileUrl]);
 
   const handleSubmit = () => {
     if (!prompt && !file) return;
@@ -31,6 +39,7 @@ const AIChatContainer: React.FC = () => {
       role: "user",
       text: prompt,
       file: file,
+      fileUrl: fileUrl,
     };
 
     const newMessagesHistory = [...messages, userMessage];
@@ -60,16 +69,26 @@ const AIChatContainer: React.FC = () => {
 
   const handleReset = () => {
     dispatch(resetState());
+    if (fileUrl) {
+      URL.revokeObjectURL(fileUrl);
+    }
     setFile(undefined);
+    setFileUrl(undefined);
     setPrompt("");
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      setFile(e.target.files[0]);
+      const selectedFile = e.target.files[0];
+      setFile(selectedFile);
+      if (fileUrl) {
+        URL.revokeObjectURL(fileUrl);
+      }
+      setFileUrl(URL.createObjectURL(selectedFile));
       e.target.value = "";
     }
   };
+
   const toggleRecording = async () => {
     if (recording) {
       mediaRecorderRef.current?.stop();
@@ -94,6 +113,10 @@ const AIChatContainer: React.FC = () => {
             type: "audio/webm",
           });
           setFile(audioFile);
+          if (fileUrl) {
+            URL.revokeObjectURL(fileUrl);
+          }
+          setFileUrl(URL.createObjectURL(audioFile));
         };
 
         mediaRecorderRef.current = mediaRecorder;
@@ -105,7 +128,41 @@ const AIChatContainer: React.FC = () => {
       }
     }
   };
+  // Функция для установки файла и его URL
+  const setAndCreateFileUrl = useCallback(
+    (newFile: File) => {
+      setFile(newFile);
+      if (fileUrl) {
+        URL.revokeObjectURL(fileUrl);
+      }
+      setFileUrl(URL.createObjectURL(newFile));
+    },
+    [fileUrl]
+  );
 
+  const handlePaste = useCallback(
+    (e: React.ClipboardEvent<HTMLInputElement>) => {
+      const items = e.clipboardData?.items;
+      if (items) {
+        for (let i = 0; i < items.length; i++) {
+          if (items[i].type.startsWith("image/")) {
+            const blob = items[i].getAsFile();
+            if (blob) {
+              const pastedFile = new File(
+                [blob],
+                `pasted_image_${Date.now()}.${blob.type.split("/")[1]}`,
+                { type: blob.type }
+              );
+              setAndCreateFileUrl(pastedFile);
+              e.preventDefault();
+              break;
+            }
+          }
+        }
+      }
+    },
+    [setAndCreateFileUrl]
+  );
   return (
     <div className="h-screen flex flex-col">
       <div className="px-4 flex flex-col md:flex-row items-center md:mt-0">
@@ -137,24 +194,29 @@ const AIChatContainer: React.FC = () => {
                   <Paperclip className="w-4 h-4 text-gray-500" />
                   <span className="truncate max-w-xs">{file.name}</span>
                 </div>
-                <button onClick={() => setFile(undefined)} title="Remove file">
+                <button
+                  onClick={() => {
+                    setFile(undefined);
+                    if (fileUrl) {
+                      URL.revokeObjectURL(fileUrl);
+                    }
+                    setFileUrl(undefined);
+                  }}
+                  title="Remove file"
+                >
                   <X className="w-4 h-4 text-gray-500 hover:text-red-500 transition" />
                 </button>
               </div>
 
-              {file.type.startsWith("image/") && (
+              {file.type.startsWith("image/") && fileUrl && (
                 <img
-                  src={URL.createObjectURL(file)}
+                  src={fileUrl}
                   alt={file.name}
                   className="rounded-lg border max-h-64 object-contain"
                 />
               )}
-              {file.type.startsWith("audio/") && (
-                <audio
-                  controls
-                  className="max-w-xs mt-2"
-                  src={URL.createObjectURL(file)}
-                />
+              {file.type.startsWith("audio/") && fileUrl && (
+                <audio controls className="max-w-xs mt-2" src={fileUrl} />
               )}
             </div>
           )}
@@ -166,6 +228,7 @@ const AIChatContainer: React.FC = () => {
               disabled={loading}
               onChange={(e) => setPrompt(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
+              onPaste={handlePaste}
               className="w-full text-xl text-gray-800 bg-white rounded-2xl border-none focus:outline-none focus:ring-0 focus:border-none"
             />
             <div className="flex items-center justify-between mt-3 px-1">
