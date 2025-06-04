@@ -2,6 +2,7 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import { LoginData, RegisterData, UserInfo } from "../../types/auth";
 import { showSuccessToast, showErrorToast } from "../../utils/toast";
 import { clearCreatorDecks } from "../reducers/deckSlice";
+import { fetchWithRefresh } from "./refreshToken";
 
 export const registerUser = createAsyncThunk<
   void,
@@ -27,7 +28,8 @@ export const registerUser = createAsyncThunk<
 });
 
 export const loginUser = createAsyncThunk<
-  string,
+  // string,
+  void,
   LoginData,
   { rejectValue: string }
 >("auth/loginUser", async (data, { dispatch, rejectWithValue }) => {
@@ -36,20 +38,21 @@ export const loginUser = createAsyncThunk<
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
+      credentials: "include",
     });
     if (!response.ok) {
       const error = await response.json();
       showErrorToast(error.detail || "Ката кетти");
       return rejectWithValue(error.detail || "Ката кетти");
     }
-    const payload = await response.json();
-    const token = payload.access_token;
-    if (!token)
-      return rejectWithValue("Login succeeded but no token in response");
-    localStorage.setItem("access_token", token);
+
+    if (!response.ok) {
+      const error = await response.json();
+      showErrorToast(error.detail || "Ката кетти");
+      return rejectWithValue(error.detail || "Ката кетти");
+    }
     dispatch(getUser());
     showSuccessToast("Кош келиңиз!");
-    return token;
   } catch (error: any) {
     showErrorToast(error.message || "Серверге туташуу мүмкүн болбоду");
     return rejectWithValue(error.message || "Серверге туташуу мүмкүн болбоду");
@@ -60,16 +63,10 @@ export const logoutUser = createAsyncThunk<void, void>(
   "auth/logoutUser",
   async (_, { rejectWithValue, dispatch }) => {
     try {
-      const token = localStorage.getItem("access_token");
-      if (token) {
-        await fetch("http://localhost:8000/auth/logout", {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-      }
-      localStorage.removeItem("access_token");
+      await fetch("http://localhost:8000/auth/logout", {
+        method: "POST",
+        credentials: "include",
+      });
       dispatch(clearCreatorDecks());
       showSuccessToast("Сиз ийгиликтүү чыктыңыз");
     } catch (error: any) {
@@ -84,16 +81,13 @@ export const getUser = createAsyncThunk<
   void,
   { rejectValue: string }
 >("auth/getUser", async (_, { rejectWithValue }) => {
-  const token = localStorage.getItem("access_token");
-  if (!token) return rejectWithValue("No auth token");
-
   try {
-    const response = await fetch("http://localhost:8000/users/me", {
+    const response = await fetchWithRefresh("http://localhost:8000/users/me", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
       },
+      credentials: "include",
     });
 
     if (!response.ok) {

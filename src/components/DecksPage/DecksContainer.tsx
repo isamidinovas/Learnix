@@ -40,6 +40,7 @@ const DecksContainer: React.FC = () => {
   const handleCategoryChange = (category: string) => {
     setSelectedCategory(category);
   };
+  console.log("creatorDecks:", creatorDecks);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -105,11 +106,7 @@ const DecksContainer: React.FC = () => {
           Сиздин карточкаларыңыз
         </h2>
         <NavLink
-          to={
-            user && localStorage.getItem("access_token")
-              ? "/decks/create"
-              : "/signup"
-          }
+          to={user ? "/decks/create" : "/signup"}
           className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
         >
           <SquarePlus className="w-5 h-5" />

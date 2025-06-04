@@ -1,6 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { DeckData, DeckDataList } from "../../types/decks";
 import { showSuccessToast, showErrorToast } from "../../utils/toast";
+import { fetchWithRefresh } from "./refreshToken";
 
 interface GetDecksParams {
   title?: string;
@@ -13,17 +14,17 @@ export const createDeck = createAsyncThunk<
   { rejectValue: string }
 >("decks/createDeck", async (deckData, { rejectWithValue }) => {
   try {
-    const token = localStorage.getItem("access_token");
-    const headers: HeadersInit = {
-      "Content-Type": "application/json",
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-    };
-
-    const response = await fetch(`http://127.0.0.1:8000/create/decks/`, {
-      method: "POST",
-      headers: headers,
-      body: JSON.stringify(deckData),
-    });
+    const response = await fetchWithRefresh(
+      `http://localhost:8000/create/decks/`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(deckData),
+        credentials: "include",
+      }
+    );
 
     if (!response.ok) {
       const errorData = await response.json();
@@ -55,7 +56,7 @@ export const getDecks = createAsyncThunk<
     }
 
     const response = await fetch(
-      `http://127.0.0.1:8000/decks?${queryParams.toString()}`
+      `http://localhost:8000/decks?${queryParams.toString()}`
     );
 
     if (!response.ok) {
@@ -75,22 +76,19 @@ export const getMyDecksList = createAsyncThunk<
   { rejectValue: string }
 >("decks/getMyDecksList", async ({ title, subject }, { rejectWithValue }) => {
   try {
-    const token = localStorage.getItem("access_token");
-    const headers: HeadersInit = {
-      "Content-Type": "application/json",
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-    };
-
-    const url = new URL("http://127.0.0.1:8000/my-decks/");
+    const url = new URL("http://localhost:8000/my-decks/");
     if (title) {
       url.searchParams.append("title", title);
     }
     if (subject && subject !== "Баары") {
       url.searchParams.append("subject", subject);
     }
-    const response = await fetch(url.toString(), {
+    const response = await fetchWithRefresh(url.toString(), {
       method: "GET",
-      headers,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
     });
 
     if (!response.ok) {
@@ -101,6 +99,7 @@ export const getMyDecksList = createAsyncThunk<
     }
 
     const data = await response.json();
+
     return data;
   } catch (error: any) {
     return rejectWithValue(error.message || "Серверге туташуу мүмкүн болбоду");
@@ -113,17 +112,16 @@ export const getDeckById = createAsyncThunk<
   { rejectValue: string }
 >("decks/getDeck", async (id: string, { rejectWithValue }) => {
   try {
-    const token = localStorage.getItem("access_token");
-
-    const headers: HeadersInit = {
-      "Content-Type": "application/json",
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-    };
-
-    const response = await fetch(`http://127.0.0.1:8000/decks/${id}`, {
-      method: "GET",
-      headers,
-    });
+    const response = await fetchWithRefresh(
+      `http://localhost:8000/decks/${id}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+      }
+    );
 
     if (!response.ok) {
       const errorData = await response.json();
@@ -143,18 +141,18 @@ export const removeDeck = createAsyncThunk<
   string,
   string,
   { rejectValue: string }
->("decks/removeDeck", async (id: string, { dispatch, rejectWithValue }) => {
+>("decks/removeDeck", async (id: string, { rejectWithValue }) => {
   try {
-    const token = localStorage.getItem("access_token");
-    const headers: HeadersInit = {
-      "Content-Type": "application/json",
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-    };
-
-    const response = await fetch(`http://127.0.0.1:8000/decks/${id}`, {
-      method: "DELETE",
-      headers,
-    });
+    const response = await fetchWithRefresh(
+      `http://localhost:8000/decks/${id}`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+      }
+    );
 
     if (!response.ok) {
       const errorData = await response.json();
@@ -179,18 +177,17 @@ export const updateDeck = createAsyncThunk<
   { rejectValue: string }
 >("decks/updateDeck", async ({ id, data }, { dispatch, rejectWithValue }) => {
   try {
-    const token = localStorage.getItem("access_token");
-
-    const headers: HeadersInit = {
-      "Content-Type": "application/json",
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-    };
-
-    const response = await fetch(`http://127.0.0.1:8000/decks/${id}`, {
-      method: "PUT",
-      headers,
-      body: JSON.stringify(data),
-    });
+    const response = await fetchWithRefresh(
+      `http://localhost:8000/decks/${id}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify(data),
+      }
+    );
 
     if (!response.ok) {
       const errorData = await response.json();

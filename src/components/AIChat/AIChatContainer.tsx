@@ -130,7 +130,6 @@ const AIChatContainer: React.FC = () => {
       const originalFile = e.target.files[0];
 
       if (originalFile.type.startsWith("image/")) {
-        console.log(`originalFile size ${originalFile.size / 1024 / 1024} MB`);
         const options = {
           maxSizeMB: 1,
           maxWidthOrHeight: 1920,
@@ -138,9 +137,6 @@ const AIChatContainer: React.FC = () => {
         };
         try {
           const compressedFile = await imageCompression(originalFile, options);
-          console.log(
-            `compressedFile size ${compressedFile.size / 1024 / 1024} MB`
-          );
           const newFile = new File([compressedFile], originalFile.name, {
             type: compressedFile.type,
           });

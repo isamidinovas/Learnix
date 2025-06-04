@@ -24,12 +24,10 @@ const ProfileContainer = () => {
 
   const handleProfileUpdate = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Profile updated:", profile);
   };
 
   const handlePasswordChange = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Password changed:", passwords);
   };
   useEffect(() => {
     if (!user) {

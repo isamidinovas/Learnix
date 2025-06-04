@@ -19,7 +19,7 @@ const DeckDetailContainer: React.FC = () => {
   const { id } = useParams();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-
+  const currentUser = useAppSelector((state) => state.auth.user);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [flipped, setFlipped] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -95,55 +95,54 @@ const DeckDetailContainer: React.FC = () => {
       <NavLink to="/decks" className="text-gray-600 p-2">
         <CircleArrowLeft className="w-11 h-8 md:h-9 absolute top-7 left-4 md:left-10 opacity-50 hover:opacity-100 transition-opacity" />
       </NavLink>
-
-      <div className="absolute top-7 right-4 md:right-10">
-        <button
-          onClick={() => setIsModalOpen(!isModalOpen)}
-          className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-        >
-          <EllipsisVertical className="w-6 h-6 text-gray-600" />
-        </button>
-
-        {isModalOpen && selectedDeck && (
-          <div
-            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 animate-fadeIn"
-            onClick={handleModalClose}
+      {selectedDeck?.user_id === currentUser?.id && (
+        <div className="absolute top-7 right-4 md:right-10">
+          <button
+            onClick={() => setIsModalOpen(!isModalOpen)}
+            className="p-2 hover:bg-gray-100 rounded-full transition-colors"
           >
+            <EllipsisVertical className="w-6 h-6 text-gray-600" />
+          </button>
+          {isModalOpen && selectedDeck && (
             <div
-              className="bg-white rounded-xl p-6 w-full max-w-md mx-4 animate-slideIn"
-              onClick={(e) => e.stopPropagation()}
+              className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 animate-fadeIn"
+              onClick={handleModalClose}
             >
-              <div className="flex justify-between items-center">
-                <button
-                  onClick={handleModalClose}
-                  className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-                >
-                  <X className="w-5 h-5 text-gray-600" />
-                </button>
-              </div>
+              <div
+                className="bg-white rounded-xl p-6 w-full max-w-md mx-4 animate-slideIn"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="flex justify-between items-center">
+                  <button
+                    onClick={handleModalClose}
+                    className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                  >
+                    <X className="w-5 h-5 text-gray-600" />
+                  </button>
+                </div>
 
-              <div className="space-y-3">
-                <button
-                  onClick={handleEdit}
-                  className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-purple-50 text-purple-700 rounded-lg hover:bg-purple-100 transition-colors"
-                >
-                  <PencilLine className="w-5 h-5" />
-                  <span>Оңдоо</span>
-                </button>
+                <div className="space-y-3">
+                  <button
+                    onClick={handleEdit}
+                    className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-purple-50 text-purple-700 rounded-lg hover:bg-purple-100 transition-colors"
+                  >
+                    <PencilLine className="w-5 h-5" />
+                    <span>Оңдоо</span>
+                  </button>
 
-                <button
-                  onClick={handleDeleteClick}
-                  className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors"
-                >
-                  <Trash2 className="w-5 h-5" />
-                  <span>Өчүрүү</span>
-                </button>
+                  <button
+                    onClick={handleDeleteClick}
+                    className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors"
+                  >
+                    <Trash2 className="w-5 h-5" />
+                    <span>Өчүрүү</span>
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-        )}
-      </div>
-
+          )}
+        </div>
+      )}
       <div className="text-center mb-8">
         <h2 className="text-4xl font-extrabold text-green-700">
           {selectedDeck.title}

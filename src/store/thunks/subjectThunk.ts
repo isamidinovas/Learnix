@@ -7,7 +7,7 @@ export const getSubjects = createAsyncThunk(
   async (_, { dispatch }) => {
     try {
       dispatch(setLoading(true));
-      const response = await fetch("http://127.0.0.1:8000/subject");
+      const response = await fetch("http://localhost:8000/subject");
 
       if (!response.ok) {
         throw new Error("Предметтерди алууда ката кетти");

@@ -1,6 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 
-const API_ENDPOINT = "http://127.0.0.1:8000/chat-with-document/";
+const API_ENDPOINT = "http://localhost:8000/chat-with-document/";
 export const chatWithDocumentAsync = createAsyncThunk(
   "chatWithDocument/chat",
   async (

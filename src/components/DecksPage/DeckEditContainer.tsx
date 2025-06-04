@@ -62,20 +62,31 @@ const DeckEditContainer: React.FC = () => {
     updated.splice(index, 1);
     setFlashcards(updated);
   };
+  useEffect(() => {
+    if (id) {
+      dispatch(getDeckById(id));
+    }
+  }, [dispatch, id]);
 
+  // Установка данных после загрузки selectedDeck
   useEffect(() => {
     if (selectedDeck) {
+      console.log("selected:", selectedDeck);
       setTitle(selectedDeck.title);
       setDescription(selectedDeck.description || "");
-      // setSubjectId(selectedDeck.subject);
-      if (id && !selectedDeck) {
-        dispatch(getDeckById(id));
-      }
       setFlashcards(
         selectedDeck.flashcards?.map((card) => ({ ...card })) || []
       );
+
+      // Найди subjectId по имени предмета
+      const matchedSubject = subjects.find(
+        (s) => s.name === selectedDeck.subject
+      );
+      if (matchedSubject) {
+        setSubjectId(matchedSubject.id);
+      }
     }
-  }, [selectedDeck]);
+  }, [selectedDeck, subjects]);
 
   useEffect(() => {
     dispatch(getSubjects());

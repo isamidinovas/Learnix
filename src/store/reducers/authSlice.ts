@@ -9,20 +9,16 @@ import { UserInfo } from "../../types/auth";
 
 interface AuthState {
   user: UserInfo | null;
-  token: string | null;
   loading: boolean;
   error: string | null;
   isAuthenticated: boolean;
 }
 
-const token = localStorage.getItem("access_token");
-
 const initialState: AuthState = {
   user: null,
-  token: token,
   loading: false,
   error: null,
-  isAuthenticated: !!token,
+  isAuthenticated: false,
 };
 
 const authSlice = createSlice({
@@ -34,11 +30,9 @@ const authSlice = createSlice({
     },
     resetState(state) {
       state.user = null;
-      state.token = null;
       state.loading = false;
       state.error = null;
       state.isAuthenticated = false;
-      localStorage.removeItem("access_token");
     },
   },
   extraReducers: (builder) => {
@@ -60,19 +54,15 @@ const authSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(loginUser.fulfilled, (state, action: PayloadAction<string>) => {
+      .addCase(loginUser.fulfilled, (state) => {
         state.loading = false;
-        state.token = action.payload;
         state.isAuthenticated = true;
         state.error = null;
-        localStorage.setItem("access_token", action.payload);
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || "Ката кетти";
         state.isAuthenticated = false;
-        state.token = null;
-        localStorage.removeItem("access_token");
       });
 
     builder
@@ -81,11 +71,9 @@ const authSlice = createSlice({
       })
       .addCase(logoutUser.fulfilled, (state) => {
         state.user = null;
-        state.token = null;
         state.isAuthenticated = false;
         state.error = null;
         state.loading = false;
-        localStorage.removeItem("access_token");
       })
       .addCase(logoutUser.rejected, (state, action) => {
         state.loading = false;
@@ -109,8 +97,6 @@ const authSlice = createSlice({
         state.error = action.payload || "Ката кетти";
         state.isAuthenticated = false;
         state.user = null;
-        state.token = null;
-        localStorage.removeItem("access_token");
       });
   },
 });

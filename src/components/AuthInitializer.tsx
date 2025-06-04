@@ -4,15 +4,13 @@ import { getUser } from "../store/thunks/authThunk";
 
 const AuthInitializer = () => {
   const dispatch = useAppDispatch();
-  const { token, isAuthenticated, user } = useAppSelector(
-    (state) => state.auth
-  );
+  const { isAuthenticated, user } = useAppSelector((state) => state.auth);
 
   useEffect(() => {
-    if (token && isAuthenticated && !user) {
+    if (!user) {
       dispatch(getUser());
     }
-  }, [dispatch, token, isAuthenticated, user]);
+  }, [dispatch, isAuthenticated, user]);
 
   return null;
 };
