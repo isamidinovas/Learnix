@@ -109,7 +109,6 @@ const AskEducatorsContainer: React.FC = () => {
           </div>
         </div>
 
-        {/* Правая секция с подсказками */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 h-fit">
           <div className="mb-8">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">

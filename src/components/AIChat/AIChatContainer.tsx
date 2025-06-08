@@ -10,7 +10,7 @@ import {
   X,
   Mic,
   Camera,
-  Video,
+  Repeat,
   Image,
   FileText,
   Play,
@@ -30,7 +30,7 @@ const AIChatContainer: React.FC = () => {
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const [recording, setRecording] = useState(false);
   const dispatch = useAppDispatch();
-
+  const fileUrlsRef = useRef<Map<string, string>>(new Map());
   const [showFileInputOptions, setShowFileInputOptions] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const fileOptionsRef = useRef<HTMLDivElement>(null);
@@ -50,6 +50,30 @@ const AIChatContainer: React.FC = () => {
     };
   }, [fileUrl]);
 
+  // Функция для создания постоянного URL для файла
+  const createPermanentFileUrl = useCallback(
+    (file: File, fileName: string): string => {
+      const existingUrl = fileUrlsRef.current.get(fileName);
+      if (existingUrl) {
+        return existingUrl;
+      }
+
+      const newUrl = URL.createObjectURL(file);
+      fileUrlsRef.current.set(fileName, newUrl);
+      return newUrl;
+    },
+    []
+  );
+  // Очистка всех URL при размонтировании компонента
+  useEffect(() => {
+    return () => {
+      fileUrlsRef.current.forEach((url) => {
+        URL.revokeObjectURL(url);
+      });
+      fileUrlsRef.current.clear();
+    };
+  }, []);
+
   useEffect(() => {
     if (!isCameraActive && videoStreamRef.current) {
       videoStreamRef.current.getTracks().forEach((track) => track.stop());
@@ -62,7 +86,6 @@ const AIChatContainer: React.FC = () => {
       openCameraStream();
     }
   }, [isCameraActive, cameraFacingMode]);
-
   const _setFileAndUrl = useCallback(
     (newFile: File | undefined) => {
       setFile(newFile);
@@ -80,12 +103,16 @@ const AIChatContainer: React.FC = () => {
 
   const handleSubmit = () => {
     if (!prompt && !file) return;
-
+    let permanentFileUrl = fileUrl;
+    if (file && fileUrl) {
+      const fileName = `${file.name}-${Date.now()}`;
+      permanentFileUrl = createPermanentFileUrl(file, fileName);
+    }
     const userMessage = {
       role: "user",
       text: prompt,
       file: file,
-      fileUrl: fileUrl,
+      fileUrl: permanentFileUrl,
     };
 
     const newMessagesHistory = [...messages, userMessage];
@@ -115,9 +142,6 @@ const AIChatContainer: React.FC = () => {
 
   const handleReset = () => {
     dispatch(resetState());
-    if (fileUrl) {
-      URL.revokeObjectURL(fileUrl);
-    }
     setFile(undefined);
     setFileUrl(undefined);
     setPrompt("");
@@ -286,8 +310,6 @@ const AIChatContainer: React.FC = () => {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      // Проверяем, если меню открыто И клик произошел вне контейнера опций файла
-      // И клик не был по кнопке Paperclip, которая открывает меню
       if (
         showFileInputOptions &&
         fileOptionsRef.current &&
@@ -298,10 +320,8 @@ const AIChatContainer: React.FC = () => {
       }
     };
 
-    // Добавляем слушатель событий на весь документ
     document.addEventListener("mousedown", handleClickOutside);
 
-    // Очищаем слушатель событий при размонтировании компонента
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
@@ -426,12 +446,14 @@ const AIChatContainer: React.FC = () => {
                       type="button"
                       title={recording ? "Токтотуу" : "Жаздырууну баштоо"}
                       onClick={toggleRecording}
-                      disabled={loading}
+                      disabled={loading || isRecordingVideo}
                       className="p-2 rounded-full hover:bg-gray-100"
                     >
                       <Mic
                         className={`size-6 transition ${
-                          recording
+                          loading
+                            ? "text-gray-400"
+                            : recording
                             ? "text-red-600 animate-pulse"
                             : "text-gray-600 hover:text-black"
                         }`}
@@ -500,9 +522,20 @@ const AIChatContainer: React.FC = () => {
             autoPlay
             playsInline
             muted
-            className="w-[50%] h-[50-%] object-cover"
+            className=" w-[100%] h-[100%] md:w-[50%] md:h-[50-%] object-cover"
           />
-
+          <button
+            onClick={() =>
+              setCameraFacingMode((prev) =>
+                prev === "user" ? "environment" : "user"
+              )
+            }
+            disabled={loading || isRecordingVideo}
+            title="Камераны өзгөртүү"
+            className="absolute bottom-4 right-4 p-4 rounded-full  text-white border-4 border-white hover:bg-white transition disabled:opacity-50"
+          >
+            <Repeat className="size-5" />
+          </button>
           <div className="absolute top-0 left-0 right-0 p-4 flex justify-between items-center bg-gradient-to-b from-black/50 to-transparent">
             <button
               onClick={() => setIsCameraActive(false)}
@@ -518,7 +551,7 @@ const AIChatContainer: React.FC = () => {
             <button
               onClick={takePhoto}
               disabled={loading || isRecordingVideo}
-              className="p-4 rounded-full bg-white/80 text-black border-4 border-white hover:bg-white transition disabled:opacity-50"
+              className="p-4 rounded-full  text-white border-4 border-white hover:bg-white transition disabled:opacity-50"
               title="Сүрөт тартуу"
             >
               <Image className="size-8" />
@@ -528,11 +561,11 @@ const AIChatContainer: React.FC = () => {
               onClick={toggleVideoRecording}
               disabled={loading}
               className={`p-4 rounded-full ${
-                isRecordingVideo ? "bg-red-600" : "bg-white/80"
+                isRecordingVideo ? "bg-red-600" : ""
               } text-white border-4 ${
-                isRecordingVideo ? "border-red-800" : "border-white"
+                isRecordingVideo ? "border-red-800" : ""
               } hover:${
-                isRecordingVideo ? "bg-red-700" : "bg-white"
+                isRecordingVideo ? "bg-red-700" : ""
               } transition disabled:opacity-50 ${
                 isRecordingVideo ? "animate-pulse" : ""
               }`}

@@ -5,7 +5,7 @@ interface Message {
   role: string;
   text: string;
   file?: File;
-  fileUrl?: string;
+  fileUrl?: string | undefined;
 }
 
 interface MessagesProps {
@@ -21,6 +21,7 @@ export const Messages: React.FC<MessagesProps> = ({ messages, loading }) => {
       containerRef.current.scrollTop = containerRef.current.scrollHeight;
     }
   }, [messages]);
+  console.log("mes:", messages);
 
   return (
     <div className="flex flex-col gap-4 py-4" ref={containerRef}>
@@ -39,7 +40,7 @@ export const Messages: React.FC<MessagesProps> = ({ messages, loading }) => {
             <div className="mt-2">
               {msg.file.type.startsWith("image/") ? (
                 <img
-                  src={URL.createObjectURL(msg.file)}
+                  src={msg.fileUrl}
                   alt={msg.file.name}
                   className="rounded-lg border max-h-40 object-contain"
                 />

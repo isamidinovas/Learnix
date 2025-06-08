@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
 import { logoutUser } from "../../store/thunks/authThunk";
@@ -9,6 +9,8 @@ interface NavbarProps {
 }
 
 const Navbar: React.FC<NavbarProps> = ({ onMenuClick }) => {
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+
   const currentUser = useAppSelector((state) => state.auth.user);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
@@ -30,13 +32,44 @@ const Navbar: React.FC<NavbarProps> = ({ onMenuClick }) => {
               Learnix
             </NavLink>
           </div>
-
+          {/* {isDeleteModalOpen && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 animate-fadeIn"
+          onClick={handleDeleteCancel}
+        >
+          <div
+            className="bg-white rounded-xl p-6 w-full max-w-md mx-4 animate-slideIn"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="text-center">
+              <Trash2 className="w-12 h-12 text-red-500 mx-auto mb-4" />
+              <h3 className="text-xl font-semibold text-gray-800 mb-2">
+                Карточканы өчүрүүнү каалайсызбы?
+              </h3>
+              <div className="flex justify-center gap-4">
+                <button
+                  onClick={handleDeleteCancel}
+                  className="px-6 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+                >
+                  Жок
+                </button>
+                <button
+                  onClick={handleDeleteConfirm}
+                  className="px-6 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+                >
+                  Ооба
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )} */}
           {/* Правая часть */}
           <div className="flex items-center gap-4">
             {currentUser ? (
               <div className="flex items-center gap-4">
                 <button
-                  onClick={handleLogout}
+                  onClick={() => setIsLogoutModalOpen(true)}
                   className="hidden md:block px-4 py-2 text-blue-600 border border-blue-600 rounded-lg hover:bg-blue-50 transition-colors"
                 >
                   Чыгуу
@@ -77,6 +110,40 @@ const Navbar: React.FC<NavbarProps> = ({ onMenuClick }) => {
               <Menu size={24} />
             </button>
           </div>
+          {isLogoutModalOpen && (
+            <div
+              className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 animate-fadeIn"
+              onClick={() => setIsLogoutModalOpen(false)}
+            >
+              <div
+                className="bg-white rounded-xl p-6 w-full max-w-md mx-4 animate-slideIn"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="text-center">
+                  <h3 className="text-xl font-semibold text-gray-800 mb-4">
+                    Чыгууну каалайсызбы?
+                  </h3>
+                  <div className="flex justify-center gap-4">
+                    <button
+                      onClick={() => setIsLogoutModalOpen(false)}
+                      className="px-6 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+                    >
+                      Жок
+                    </button>
+                    <button
+                      onClick={() => {
+                        setIsLogoutModalOpen(false);
+                        handleLogout();
+                      }}
+                      className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                    >
+                      Ооба
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </nav>
       </div>
     </div>
